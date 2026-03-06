@@ -14,10 +14,12 @@ interface Post {
     user_id: string;
     users: { full_name: string; username: string; avatar_url: string };
     post_likes?: { user_id: string }[];
+    post_saves?: { user_id: string }[];
 }
 
-export default function FeedScreen({ go }: { go: (s: Scr) => void }) {
+export default function FeedScreen({ go }: { go: (s: Scr, id?: string) => void }) {
     const [posts, setPosts] = useState<Post[]>([]);
+    const [followingIds, setFollowingIds] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState(0);
     const { user } = useAuthStore();
@@ -25,18 +27,24 @@ export default function FeedScreen({ go }: { go: (s: Scr) => void }) {
 
     const fetchPosts = useCallback(async () => {
         setLoading(true);
+
+        // Fetch following IDs
+        if (user) {
+            const { data: follows } = await supabase.from('follows').select('following_id').eq('follower_id', user.id);
+            setFollowingIds(follows?.map(f => f.following_id) ?? []);
+        }
+
         let query = supabase
             .from('posts')
-            .select('*, users(full_name, username, avatar_url), post_likes(user_id)')
+            .select('*, users(full_name, username, avatar_url), post_likes(user_id), post_saves(user_id)')
             .order('created_at', { ascending: false })
             .limit(20);
 
         if (tab === 1 && user) {
-            // Following tab — posts from users this person follows
-            const { data: follows } = await supabase
-                .from('follows').select('following_id').eq('follower_id', user.id);
+            const { data: follows } = await supabase.from('follows').select('following_id').eq('follower_id', user.id);
             const ids = follows?.map(f => f.following_id) ?? [];
             if (ids.length) query = query.in('user_id', ids);
+            else { setPosts([]); setLoading(false); return; }
         }
 
         const { data } = await query;
@@ -53,6 +61,28 @@ export default function FeedScreen({ go }: { go: (s: Scr) => void }) {
             await supabase.from('post_likes').delete().eq('post_id', post.id).eq('user_id', user.id);
         } else {
             await supabase.from('post_likes').insert({ post_id: post.id, user_id: user.id });
+        }
+        fetchPosts();
+    }
+
+    async function toggleSave(post: Post) {
+        if (!user) return;
+        const saved = post.post_saves?.some(s => s.user_id === user.id);
+        if (saved) {
+            await supabase.from('post_saves').delete().eq('post_id', post.id).eq('user_id', user.id);
+        } else {
+            await supabase.from('post_saves').insert({ post_id: post.id, user_id: user.id });
+        }
+        fetchPosts();
+    }
+
+    async function toggleFollow(targetUserId: string) {
+        if (!user || targetUserId === user.id) return;
+        const isFollowing = followingIds.includes(targetUserId);
+        if (isFollowing) {
+            await supabase.from('follows').delete().eq('follower_id', user.id).eq('following_id', targetUserId);
+        } else {
+            await supabase.from('follows').insert({ follower_id: user.id, following_id: targetUserId });
         }
         fetchPosts();
     }
@@ -109,6 +139,8 @@ export default function FeedScreen({ go }: { go: (s: Scr) => void }) {
                     </div>
                 ) : posts.map(p => {
                     const liked = p.post_likes?.some(l => l.user_id === user?.id);
+                    const saved = p.post_saves?.some(s => s.user_id === user?.id);
+                    const isFollowing = followingIds.includes(p.user_id);
                     return (
                         <article key={p.id} style={{ padding: 16, borderBottom: `1px solid ${BORDER}30` }}>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
@@ -121,7 +153,11 @@ export default function FeedScreen({ go }: { go: (s: Scr) => void }) {
                                         <div style={{ color: '#666', fontSize: 12, marginTop: 2 }}>@{p.users?.username ?? '...'}</div>
                                     </div>
                                 </div>
-                                <button style={{ padding: '6px 14px', borderRadius: 999, background: `${P}20`, color: P, fontSize: 12, fontWeight: 700, border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>Follow</button>
+                                {p.user_id !== user?.id && (
+                                    <button onClick={() => toggleFollow(p.user_id)} style={{ padding: '6px 14px', borderRadius: 999, background: isFollowing ? 'transparent' : `${P}20`, border: isFollowing ? `1px solid ${BORDER}` : 'none', color: isFollowing ? '#888' : P, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+                                        {isFollowing ? 'Following' : 'Follow'}
+                                    </button>
+                                )}
                             </div>
                             {p.media_urls?.[0] && (
                                 <div style={{ borderRadius: 12, overflow: 'hidden', aspectRatio: '1', background: CARD }}>
@@ -143,8 +179,8 @@ export default function FeedScreen({ go }: { go: (s: Scr) => void }) {
                                         <Icon n="share" style={{ fontSize: 16, color: '#888' }} />
                                     </button>
                                 </div>
-                                <button style={{ padding: '6px 10px', borderRadius: 999, background: `${CARD}80`, border: 'none', cursor: 'pointer' }}>
-                                    <Icon n="bookmark" style={{ fontSize: 20, color: '#888' }} />
+                                <button onClick={() => toggleSave(p)} style={{ padding: '6px 10px', borderRadius: 999, background: `${CARD}80`, border: 'none', cursor: 'pointer' }}>
+                                    <Icon n="bookmark" fill={saved} style={{ fontSize: 20, color: saved ? P : '#888' }} />
                                 </button>
                             </div>
                         </article>

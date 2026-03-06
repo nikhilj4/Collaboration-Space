@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
+export const dynamic = 'force-dynamic';
+
 // POST /api/ai/match — AI creator-brand matching
 export async function POST(request: Request) {
     try {
