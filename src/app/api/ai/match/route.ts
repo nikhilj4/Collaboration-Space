@@ -33,7 +33,7 @@ export async function POST(request: Request) {
 
         const prompt = `You are an influencer marketing AI. Match creators to a campaign.
 Campaign: ${JSON.stringify({ title: campaign.title, niches: campaign.target_niches, type: campaign.campaign_type, budget: `${campaign.budget_min}-${campaign.budget_max}` })}
-Creators: ${JSON.stringify(creators.slice(0, 20).map(c => ({ id: c.id, score: c.social_score, categories: c.categories })))}
+Creators: ${JSON.stringify((creators as any[]).slice(0, 20).map((c: any) => ({ id: c.id, score: c.social_score, categories: c.categories })))}
 Return JSON array of top 10 creator IDs ranked by fit score 0-100: [{"id":"...","fit_score":85,"reason":"..."}]`;
 
         const completion = await openai.chat.completions.create({

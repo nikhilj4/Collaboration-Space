@@ -31,7 +31,7 @@ export default function FeedScreen({ go }: { go: (s: Scr, id?: string) => void }
         // Fetch following IDs
         if (user) {
             const { data: follows } = await supabase.from('follows').select('following_id').eq('follower_id', user.id);
-            setFollowingIds(follows?.map(f => f.following_id) ?? []);
+            setFollowingIds((follows as { following_id: string }[] | null)?.map(f => f.following_id) ?? []);
         }
 
         let query = supabase
@@ -42,7 +42,7 @@ export default function FeedScreen({ go }: { go: (s: Scr, id?: string) => void }
 
         if (tab === 1 && user) {
             const { data: follows } = await supabase.from('follows').select('following_id').eq('follower_id', user.id);
-            const ids = follows?.map(f => f.following_id) ?? [];
+            const ids = (follows as { following_id: string }[] | null)?.map(f => f.following_id) ?? [];
             if (ids.length) query = query.in('user_id', ids);
             else { setPosts([]); setLoading(false); return; }
         }

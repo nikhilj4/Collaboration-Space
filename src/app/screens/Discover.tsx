@@ -100,7 +100,7 @@ export default function DiscoverScreen({ go }: { go: (s: Scr) => void }) {
                         <p style={{ fontSize: 13, marginTop: 8 }}>Try a different search or niche filter</p>
                     </div>
                 ) : creators.map(c => {
-                    const bestAcct = c.social_accounts?.sort((a, b) => b.followers_count - a.followers_count)[0];
+                    const bestAcct = (c.social_accounts as any[] | undefined)?.sort((a, b) => b.followers_count - a.followers_count)[0];
                     return (
                         <div key={c.id} style={{ background: `${CARD}80`, borderRadius: 16, padding: 16, border: `1px solid ${P}18` }}>
                             <div style={{ display: 'flex', gap: 14 }}>

@@ -44,15 +44,15 @@ export default function NotificationsScreen({ go }: { go: (s: Scr) => void }) {
         if (tab === 1) query = query.in('type', ['campaign_invite', 'payment']);
         if (tab === 2) query = query.in('type', ['follow', 'like', 'comment']);
 
-        query.then(({ data }) => {
-            setNotifs((data as Notification[]) ?? []);
+        query.then(({ data }: { data: Notification[] | null }) => {
+            setNotifs(data ?? []);
             setLoading(false);
         });
 
         // Realtime subscription
         const channel = supabase.channel('notifications')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
-                (payload) => setNotifs(prev => [payload.new as Notification, ...prev])
+                (payload: any) => setNotifs(prev => [payload.new as Notification, ...prev])
             ).subscribe();
 
         return () => { supabase.removeChannel(channel); };
