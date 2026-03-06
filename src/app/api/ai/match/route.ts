@@ -2,11 +2,10 @@ import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
 // POST /api/ai/match — AI creator-brand matching
 export async function POST(request: Request) {
     try {
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
