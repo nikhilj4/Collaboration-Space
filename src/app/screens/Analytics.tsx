@@ -41,7 +41,7 @@ function ScoreArc({ score }: { score: number }) {
     );
 }
 
-export default function AnalyticsScreen({ go }: { go: (s: Scr) => void }) {
+export default function AnalyticsScreen({ go }: { go: (s: Scr, id?: string) => void }) {
     const { user, creatorProfile } = useAuthStore();
     const [history, setHistory] = useState<ScoreHistory[]>([]);
     const [accounts, setAccounts] = useState<SocialAccount[]>([]);
@@ -55,7 +55,7 @@ export default function AnalyticsScreen({ go }: { go: (s: Scr) => void }) {
                 .eq('creator_id', creatorProfile.id).order('calculated_at', { ascending: true }).limit(12),
             supabase.from('social_accounts').select('platform, followers_count, engagement_rate, avg_likes, avg_comments, reach_estimate')
                 .eq('creator_id', creatorProfile.id),
-        ]).then(([hist, acct]) => {
+        ]).then(([hist, acct]: [any, any]) => {
             setHistory((hist.data ?? []) as ScoreHistory[]);
             setAccounts((acct.data ?? []) as SocialAccount[]);
             setLoading(false);

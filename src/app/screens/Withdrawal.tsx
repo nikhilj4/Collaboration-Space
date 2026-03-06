@@ -13,7 +13,7 @@ const inp = {
 
 const BANKS = ['HDFC Bank', 'ICICI Bank', 'SBI', 'Axis Bank', 'Kotak Mahindra', 'Yes Bank', 'Punjab National Bank', 'Other'];
 
-export default function WithdrawalScreen({ go }: { go: (s: Scr) => void }) {
+export default function WithdrawalScreen({ go }: { go: (s: Scr, id?: string) => void }) {
     const { user } = useAuthStore();
     const [step, setStep] = useState<'form' | 'confirm' | 'success'>('form');
     const [amount, setAmount] = useState('');

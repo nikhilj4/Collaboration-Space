@@ -7,7 +7,7 @@ import { useAuthStore } from '@/lib/store';
 
 interface Post { id: string; media_urls: string[]; likes_count: number; caption: string }
 
-export default function ProfileScreen({ go }: { go: (s: Scr) => void }) {
+export default function ProfileScreen({ go }: { go: (s: Scr, id?: string) => void }) {
     const { user, creatorProfile, signOut } = useAuthStore();
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
@@ -17,7 +17,7 @@ export default function ProfileScreen({ go }: { go: (s: Scr) => void }) {
         if (!user) return;
         supabase.from('posts').select('id, media_urls, likes_count, caption')
             .eq('user_id', user.id).order('created_at', { ascending: false }).limit(12)
-            .then(({ data }) => { setPosts((data as Post[]) ?? []); setLoading(false); });
+            .then(({ data }: { data: any[] | null }) => { setPosts((data as Post[]) ?? []); setLoading(false); });
     }, [user, supabase]);
 
     async function handleSignOut() { await signOut(); window.location.href = '/auth/login'; }

@@ -27,7 +27,7 @@ interface Gig {
     creator_profiles: { social_score: number; users: { full_name: string; avatar_url: string } };
 }
 
-export default function CampaignsScreen({ go }: { go: (s: Scr) => void }) {
+export default function CampaignsScreen({ go }: { go: (s: Scr, id?: string) => void }) {
     const [tab, setTab] = useState<'sponsorships' | 'gigs'>('sponsorships');
     const [campaigns, setCampaigns] = useState<Campaign[]>([]);
     const [gigs, setGigs] = useState<Gig[]>([]);
@@ -42,14 +42,14 @@ export default function CampaignsScreen({ go }: { go: (s: Scr) => void }) {
                 .eq('status', 'active')
                 .order('created_at', { ascending: false })
                 .limit(20)
-                .then(({ data }) => { setCampaigns((data as Campaign[]) ?? []); setLoading(false); });
+                .then(({ data }: { data: any[] | null }) => { setCampaigns((data as Campaign[]) ?? []); setLoading(false); });
         } else {
             supabase.from('gigs')
                 .select('*, gig_packages(name, price, delivery_days), creator_profiles(social_score, users(full_name, avatar_url))')
                 .eq('status', 'active')
                 .order('total_orders', { ascending: false })
                 .limit(20)
-                .then(({ data }) => { setGigs((data as Gig[]) ?? []); setLoading(false); });
+                .then(({ data }: { data: any[] | null }) => { setGigs((data as Gig[]) ?? []); setLoading(false); });
         }
     }, [tab, supabase]);
 

@@ -14,7 +14,7 @@ interface Gig {
     creator_profiles: { bio: string; social_score: number; users: { full_name: string; username: string; avatar_url: string } }
 }
 
-export default function GigDetailScreen({ gigId, go }: { gigId: string; go: (s: Scr) => void }) {
+export default function GigDetailScreen({ gigId, go }: { gigId: string; go: (s: Scr, id?: string) => void }) {
     const { user } = useAuthStore();
     const [gig, setGig] = useState<Gig | null>(null);
     const [loading, setLoading] = useState(true);
@@ -29,7 +29,7 @@ export default function GigDetailScreen({ gigId, go }: { gigId: string; go: (s: 
         supabase.from('gigs').select(`
       id, title, description, category, tags, packages, media_urls, views_count, orders_count, rating_avg, rating_count,
       creator_profiles ( bio, social_score, users ( full_name, username, avatar_url ) )
-    `).eq('id', gigId).single().then(({ data }) => {
+    `).eq('id', gigId).single().then(({ data }: { data: any | null }) => {
             setGig(data as unknown as Gig);
             setLoading(false);
         });

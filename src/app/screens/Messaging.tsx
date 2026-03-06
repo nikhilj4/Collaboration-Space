@@ -15,7 +15,7 @@ interface Message {
     content: string; message_type: string; created_at: string; read_at?: string;
 }
 
-export default function MessagingScreen({ go }: { go: (s: Scr) => void }) {
+export default function MessagingScreen({ go }: { go: (s: Scr, id?: string) => void }) {
     const { user } = useAuthStore();
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [activeConv, setActiveConv] = useState<Conversation | null>(null);
@@ -33,12 +33,12 @@ export default function MessagingScreen({ go }: { go: (s: Scr) => void }) {
             .select('id, participant_1, participant_2, last_message, last_message_at')
             .or(`participant_1.eq.${user.id},participant_2.eq.${user.id}`)
             .order('last_message_at', { ascending: false })
-            .then(async ({ data }) => {
+            .then(async ({ data }: { data: any[] | null }) => {
                 if (!data) { setLoadingConvs(false); return; }
                 // Fetch other user profiles
                 const enriched = await Promise.all(data.map(async c => {
                     const otherId = c.participant_1 === user.id ? c.participant_2 : c.participant_1;
-                    const { data: u } = await supabase.from('users').select('full_name, avatar_url, username').eq('id', otherId).single();
+                    const { data: u }: { data: any | null } = await supabase.from('users').select('full_name, avatar_url, username').eq('id', otherId).single();
                     return { ...c, other_user: u ?? undefined };
                 }));
                 setConversations(enriched as Conversation[]);
@@ -50,11 +50,11 @@ export default function MessagingScreen({ go }: { go: (s: Scr) => void }) {
     useEffect(() => {
         if (!activeConv) return;
         supabase.from('messages').select('*').eq('conversation_id', activeConv.id).order('created_at', { ascending: true })
-            .then(({ data }) => setMessages((data as Message[]) ?? []));
+            .then(({ data }: { data: any[] | null }) => setMessages((data as Message[]) ?? []));
 
         const channel = supabase.channel(`conv-${activeConv.id}`)
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${activeConv.id}` },
-                payload => setMessages(prev => [...prev, payload.new as Message]))
+                (payload: any) => setMessages(prev => [...prev, payload.new as Message]))
             .subscribe();
 
         return () => { supabase.removeChannel(channel); };
