@@ -4,10 +4,7 @@ import { z } from 'zod';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 
-const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID!,
-    key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
+export const dynamic = 'force-dynamic';
 
 const PLATFORM_FEE_RATE = 0.15; // 15% platform commission
 const GST_RATE = 0.18; // 18% GST on platform fee
@@ -15,6 +12,10 @@ const GST_RATE = 0.18; // 18% GST on platform fee
 // POST /api/orders — initiate gig order + create Razorpay order
 export async function POST(request: Request) {
     try {
+        const razorpay = new Razorpay({
+            key_id: process.env.RAZORPAY_KEY_ID!,
+            key_secret: process.env.RAZORPAY_KEY_SECRET!,
+        });
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
