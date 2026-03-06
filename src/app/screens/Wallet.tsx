@@ -20,7 +20,7 @@ const TYPE_ICON: Record<string, { icon: string; color: string }> = {
     platform_fee: { icon: 'percent', color: '#888' },
 };
 
-export default function WalletScreen({ go }: { go: (s: Scr) => void }) {
+export default function WalletScreen({ go }: { go: (s: Scr, id?: string) => void }) {
     const { user } = useAuthStore();
     const [wallet, setWallet] = useState<Wallet | null>(null);
     const [txns, setTxns] = useState<Transaction[]>([]);

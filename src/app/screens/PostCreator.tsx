@@ -11,7 +11,7 @@ const inp = {
     fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const,
 };
 
-export default function PostCreator({ go }: { go: (s: Scr) => void }) {
+export default function PostCreator({ go }: { go: (s: Scr, id?: string) => void }) {
     const { user } = useAuthStore();
     const [caption, setCaption] = useState('');
     const [hashtags, setHashtags] = useState('');

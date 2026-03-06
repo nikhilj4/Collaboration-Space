@@ -1,7 +1,7 @@
 import { Scr } from './types';
 import { Icon, P_COLOR as P, BG } from './ui';
 
-export default function CreateMenu({ go }: { go: (s: Scr) => void }) {
+export default function CreateMenu({ go }: { go: (s: Scr, id?: string) => void }) {
     const items = [
         { icon: 'add_a_photo', title: 'Post', sub: 'Share social content with your followers', to: 'post-creator' as Scr },
         { icon: 'work', title: 'Gig', sub: 'List your influencer services for brands', to: 'gig-builder' as Scr },

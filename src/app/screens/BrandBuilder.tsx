@@ -1,7 +1,7 @@
 import { Scr } from './types';
 import { Icon, Nav, P_COLOR as P, BG, CARD, BORDER } from './ui';
 
-export default function BrandBuilder({ go }: { go: (s: Scr) => void }) {
+export default function BrandBuilder({ go }: { go: (s: Scr, id?: string) => void }) {
     const inp = { width: '100%', background: `${P}0a`, border: `1px solid ${BORDER}`, borderRadius: 10, padding: '13px 14px', color: '#eee', fontSize: 14, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const };
     return (
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh', background: BG }}>

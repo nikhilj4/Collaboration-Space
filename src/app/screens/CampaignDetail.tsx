@@ -14,7 +14,7 @@ interface Campaign {
     brand_profiles: { company_name: string; logo_url: string | null; industry: string }
 }
 
-export default function CampaignDetailScreen({ campaignId, go }: { campaignId: string; go: (s: Scr) => void }) {
+export default function CampaignDetailScreen({ campaignId, go }: { campaignId: string; go: (s: Scr, id?: string) => void }) {
     const { user, creatorProfile } = useAuthStore();
     const [campaign, setCampaign] = useState<Campaign | null>(null);
     const [loading, setLoading] = useState(true);

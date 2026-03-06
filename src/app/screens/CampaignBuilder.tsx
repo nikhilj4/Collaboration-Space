@@ -14,7 +14,7 @@ const inp = {
 const PLATFORMS = ['Instagram', 'YouTube', 'TikTok', 'Twitter / X', 'Facebook'];
 const NICHES = ['Fashion', 'Beauty', 'Tech', 'Food', 'Travel', 'Fitness', 'Gaming', 'Lifestyle', 'Finance', 'Education'];
 
-export default function CampaignBuilder({ go }: { go: (s: Scr) => void }) {
+export default function CampaignBuilder({ go }: { go: (s: Scr, id?: string) => void }) {
     const { brandProfile } = useAuthStore() as any;
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);

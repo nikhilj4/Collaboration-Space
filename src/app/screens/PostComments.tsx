@@ -36,7 +36,7 @@ export default function PostCommentsScreen({ postId, go }: { postId: string; go:
         // Real-time new comments
         const ch = supabase.channel(`comments-${postId}`)
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'post_comments', filter: `post_id=eq.${postId}` },
-                async payload => {
+                async (payload: any) => {
                     const { data: u } = await supabase.from('users').select('full_name, username, avatar_url').eq('id', payload.new.user_id).single();
                     setComments(prev => [...prev, { ...payload.new, users: u } as Comment]);
                 })

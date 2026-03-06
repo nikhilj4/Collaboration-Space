@@ -11,14 +11,15 @@ export function Icon({ n, fill = false, style = {} }: { n: string; fill?: boolea
 
 const P = '#d125f4';
 
-export function Nav({ active, go }: { active: Scr; go: (s: Scr) => void }) {
+export function Nav({ active, go }: { active: Scr; go: (s: Scr, id?: string) => void }) {
     const tabs = [
         { id: 'feed' as Scr, icon: 'home', label: 'Home' },
-        { id: 'discover' as Scr, icon: 'explore', label: 'Discover' },
+        { id: 'discover' as Scr, icon: 'explore', label: 'Explore' },
         { id: 'create-menu' as Scr, icon: 'add', label: 'Create', center: true },
         { id: 'messaging' as Scr, icon: 'forum', label: 'Messages' },
         { id: 'profile' as Scr, icon: 'person', label: 'Profile' },
     ];
+
     return (
         <nav style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 430, background: '#120a18', borderTop: '1px solid rgba(255,255,255,0.06)', zIndex: 50 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', height: 68, padding: '0 8px 8px' }}>

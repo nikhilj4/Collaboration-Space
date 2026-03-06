@@ -11,7 +11,7 @@ const inp = {
 
 const PLATFORMS = ['Instagram', 'YouTube', 'TikTok', 'Twitter / X', 'Facebook'];
 
-export default function GigBuilder({ go }: { go: (s: Scr) => void }) {
+export default function GigBuilder({ go }: { go: (s: Scr, id?: string) => void }) {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
