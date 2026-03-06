@@ -1,0 +1,198 @@
+<html class="dark"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#d125f4",
+            "background-light": "#f8f5f8",
+            "background-dark": "#1f1022",
+          },
+          fontFamily: {
+            "display": ["Spline Sans"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: "Spline Sans", sans-serif;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="relative flex min-h-screen w-full max-w-md mx-auto flex-col bg-background-light dark:bg-background-dark overflow-x-hidden border-x border-slate-200 dark:border-slate-800">
+<!-- Header -->
+<header class="sticky top-0 z-50 flex items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 justify-between border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-3xl">hub</span>
+<h1 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight">Nova Logic Studio</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="relative flex items-center justify-center p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300">notifications</span>
+<span class="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-primary"></span>
+</button>
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300">send</span>
+</button>
+</div>
+</header>
+<!-- Tabs -->
+<nav class="flex border-b border-slate-200 dark:border-slate-800 px-4">
+<a class="flex flex-1 flex-col items-center justify-center border-b-2 border-primary text-primary pb-3 pt-4" href="#">
+<span class="text-sm font-bold tracking-wide">For You</span>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center border-b-2 border-transparent text-slate-500 dark:text-slate-400 pb-3 pt-4 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" href="#">
+<span class="text-sm font-bold tracking-wide">Following</span>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center border-b-2 border-transparent text-slate-500 dark:text-slate-400 pb-3 pt-4 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" href="#">
+<span class="text-sm font-bold tracking-wide">Creators</span>
+</a>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 pb-24 overflow-y-auto hide-scrollbar">
+<!-- Post Card 1 -->
+<article class="p-4 border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-primary/20 p-0.5 border border-primary/40">
+<img alt="Creator Profile" class="w-full h-full rounded-full" data-alt="Portrait of a young creative professional" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJ5cz2C5D-SHwW8Efi4-g4V_hK6ElemXDH-BwYL6xGPy9giA067lHq9ZdcLaCIKlrlf5LpLPN6oph1ewh5H1ghk0yL2Jew_u-yeG7IFZe4r3p4aJupC6BHbHFlf5IAIjaZj5vZyFwzHcw5lVG2gXGMo1iOUAr1PJX1KdeEl_SbNpYUjxwSIj-9c1pLVtpAEH9lbWmBXS_-AGqejvaK4VybfETeAhUxTcIFYuFj_wjo54bxIQdSE8bDZi88t-xL_QvDYzk83eXoBQ"/>
+</div>
+<div>
+<h3 class="text-slate-900 dark:text-slate-100 text-sm font-bold leading-none">Alex Rivera</h3>
+<p class="text-slate-500 dark:text-slate-400 text-xs mt-1">Digital Creator • LA</p>
+</div>
+</div>
+<button class="px-4 py-1.5 rounded-full bg-primary/10 dark:bg-primary/20 text-primary text-xs font-bold hover:bg-primary/20 transition-colors">
+            Follow
+          </button>
+</div>
+<div class="relative group">
+<div class="w-full aspect-square bg-slate-200 dark:bg-slate-800 rounded-xl overflow-hidden shadow-lg">
+<img alt="Campaign Visual" class="w-full h-full object-cover" data-alt="Abstract vibrant magenta and blue flowing gradients" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDX0zNmkerYMGkcehvSQH4Hd8V_gZTrFn-PK-Wnuy7LSIjILWxkeSCeTNC0Co5t_KNOkdjKxgD7pJeB0Oo1krIKt2kcccBJN3lXktM2pgEVG4UDT5VXcfcndx_rIoZYQAewPhacXrW-Np7qCmCVMpQEUQ904g4-dO8kxxQCSq0LdVOZ_d4oqUqtlisVWd0fz8lkBA9sPSzk3Er1wGcOAK7w1VB2gXZ9Xdif28yRJHMqXih7fQC-SMtAFnJXt0LTdvbb4FYwEbpGbw"/>
+</div>
+<div class="absolute bottom-4 left-4 right-4 flex items-center justify-between bg-black/40 backdrop-blur-md p-3 rounded-xl border border-white/10">
+<div class="flex-1 mr-3">
+<p class="text-white text-xs font-medium">Exclusive Brand Collaboration</p>
+<p class="text-white/70 text-[10px]">Join Alex's creative circle today.</p>
+</div>
+<button class="whitespace-nowrap bg-primary text-white text-xs font-bold px-4 py-2 rounded-lg shadow-lg hover:brightness-110 transition-all">
+              Sign up via Email
+            </button>
+</div>
+</div>
+<div class="flex items-center justify-between mt-4">
+<div class="flex items-center gap-1">
+<div class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800/50 group cursor-pointer">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1">favorite</span>
+<span class="text-slate-600 dark:text-slate-300 text-xs font-bold">1.2k</span>
+</div>
+<div class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800/50 group cursor-pointer">
+<span class="material-symbols-outlined text-slate-500 group-hover:text-primary transition-colors">chat_bubble</span>
+<span class="text-slate-600 dark:text-slate-300 text-xs font-bold">45</span>
+</div>
+<div class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800/50 group cursor-pointer">
+<span class="material-symbols-outlined text-slate-500 group-hover:text-primary transition-colors">share</span>
+<span class="text-slate-600 dark:text-slate-300 text-xs font-bold">12</span>
+</div>
+</div>
+<button class="p-1.5 rounded-full bg-slate-100 dark:bg-slate-800/50">
+<span class="material-symbols-outlined text-slate-500">bookmark</span>
+</button>
+</div>
+</article>
+<!-- Post Card 2 -->
+<article class="p-4 border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-primary/20 p-0.5 border border-primary/40">
+<img alt="Creator Profile" class="w-full h-full rounded-full" data-alt="Portrait of a smiling fashion influencer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtDMezvcEV_ZCXrc_QIlMtdCUoRSfjr5npKO87G8RUMEeLNI1jnXVCfq93jRSJG0aoU3yaJB73gs7JbKGvEsbtAEUuYW9_R_-cGnP8171gcfyaM5AEA4-jn38XinihrnvBmD-ukY3WLSp1yAwYlkpekTcrQk5Konm8_cgLos7d2FV9h-ICtN5nGu9xuwd55YhJ16upkLOqZB3CF0t7KlSNLkk6KSXtIuBraEX6GtKFADHyAzklb_y3iDDULw3J9tiq4PWuJP8lVA"/>
+</div>
+<div>
+<h3 class="text-slate-900 dark:text-slate-100 text-sm font-bold leading-none">Sarah Chen</h3>
+<p class="text-slate-500 dark:text-slate-400 text-xs mt-1">Fashion Strategist • NYC</p>
+</div>
+</div>
+<button class="px-4 py-1.5 rounded-full bg-primary text-white text-xs font-bold hover:brightness-110 transition-colors">
+            Following
+          </button>
+</div>
+<div class="w-full aspect-[4/5] bg-slate-200 dark:bg-slate-800 rounded-xl overflow-hidden shadow-lg mb-3">
+<img alt="Fashion Post" class="w-full h-full object-cover" data-alt="Modern geometric architecture with purple neon lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApmu2i-uT6uU7qBpycjMfKcXCazDAD-puFWPmVPnuf_NPG-1tBNwA70zuAziACdRrptbggIsUP8c3uce0Tg1TX7ywEfAbzdi0GlkKF1X2ToO_zTXmFig0Hv8LNl0_UnGPyysgDA3EpGEjVkk9BXIIhIhn6c3zoWu8gogN8VewyRCJQ0h8zgr_hCRXii9DY9t8kuaX8Fz0oRLiifDV-kCbUr5u9CVYR1G7m1TwxLYa6qPz5LnvixWL-P04_cHu20lX9ZGmG5bxxaQ"/>
+</div>
+<div class="mb-4">
+<p class="text-slate-800 dark:text-slate-200 text-sm leading-relaxed">
+            Exploring the new intersection of tech and style. Can't wait to share the full campaign with you all! <span class="text-primary font-medium">#FutureFashion #NovaCreators</span>
+</p>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1">
+<div class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800/50 group cursor-pointer">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">favorite</span>
+<span class="text-slate-600 dark:text-slate-300 text-xs font-bold">892</span>
+</div>
+<div class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800/50 group cursor-pointer">
+<span class="material-symbols-outlined text-slate-500 group-hover:text-primary transition-colors">chat_bubble</span>
+<span class="text-slate-600 dark:text-slate-300 text-xs font-bold">28</span>
+</div>
+<div class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800/50 group cursor-pointer">
+<span class="material-symbols-outlined text-slate-500 group-hover:text-primary transition-colors">share</span>
+</div>
+</div>
+<button class="p-1.5 rounded-full bg-slate-100 dark:bg-slate-800/50">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1">bookmark</span>
+</button>
+</div>
+</article>
+</main>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 z-50 w-full max-w-md bg-background-light dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 pb-safe shadow-[0_-4px_12px_rgba(0,0,0,0.1)]">
+<div class="flex items-center justify-around h-20 px-4">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">home</span>
+<span class="text-[10px] font-bold">Feed</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-[10px] font-medium">Discover</span>
+</a>
+<a class="flex flex-col items-center -mt-6" href="#">
+<div class="flex items-center justify-center size-14 bg-primary text-white rounded-full shadow-lg shadow-primary/40 border-4 border-background-light dark:border-background-dark">
+<span class="material-symbols-outlined text-3xl">add</span>
+</div>
+<span class="text-[10px] font-medium mt-1 text-slate-400 dark:text-slate-500">Create</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">forum</span>
+<span class="text-[10px] font-medium">Inbox</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</a>
+</div>
+</nav>
+</div>
+</body></html>

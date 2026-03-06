@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Activity Notifications</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d125f4",
+                        "background-light": "#f8f5f8",
+                        "background-dark": "#1f1022",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden pb-20">
+<!-- Header -->
+<div class="sticky top-0 z-10 flex items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 pb-2 justify-between border-b border-primary/10">
+<div class="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100">arrow_back</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 text-center">Notifications</h2>
+<div class="flex w-10 items-center justify-end">
+<button class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-primary/10 transition-colors text-slate-900 dark:text-slate-100">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Filtering Tabs -->
+<div class="sticky top-[60px] z-10 bg-background-light dark:bg-background-dark">
+<div class="flex border-b border-primary/10 px-4 gap-8">
+<a class="flex flex-col items-center justify-center border-b-2 border-primary text-primary pb-3 pt-4 px-1" href="#">
+<p class="text-sm font-bold leading-normal">All</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-2 border-transparent text-slate-500 dark:text-slate-400 pb-3 pt-4 px-1 hover:text-primary transition-colors" href="#">
+<p class="text-sm font-bold leading-normal">Sponsorship</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-2 border-transparent text-slate-500 dark:text-slate-400 pb-3 pt-4 px-1 hover:text-primary transition-colors" href="#">
+<p class="text-sm font-bold leading-normal">Social</p>
+</a>
+</div>
+</div>
+<!-- Notification List -->
+<div class="flex flex-col">
+<!-- Sponsorship Alert -->
+<div class="flex items-start gap-4 bg-background-light dark:bg-background-dark px-4 py-4 border-b border-primary/5 hover:bg-primary/5 transition-colors cursor-pointer">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-xl size-14 ring-1 ring-primary/20" data-alt="Modern brand logo design on product" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAzqYIUQYvuEbJMXr0HPomuEHBH-kSyLNlTvJMQeM6xlNUKdj_iJiLBosxmP4FSxMRa7xRuz43TunaDGPSyTuknT_tayM_2KrmrwsUHSUCRHsu5U93svHryTj8ij9Pl4kj_tdxJZZ8JfFQiB4xnpoH_5VzthCd-zzgGjNR4-eEUsKAZz1eX1Zj8A-mWNM8v5LL6SaDpn7VYjxOZDCdOoAtTjKbpuQ_AoCGaMJf4qo9BXzjD1VokYvKnX_tTfSgLBN7w5akkf5o5qw");'></div>
+<div class="absolute -bottom-1 -right-1 bg-primary text-white size-6 rounded-full flex items-center justify-center border-2 border-background-dark">
+<span class="material-symbols-outlined text-[14px] font-bold">campaign</span>
+</div>
+</div>
+<div class="flex flex-1 flex-col justify-center">
+<p class="text-slate-900 dark:text-slate-100 text-sm font-semibold leading-snug">
+<span class="text-primary">Glow Skin Co.</span> sent a new sponsorship brief for Summer 2024
+                    </p>
+<p class="text-slate-500 dark:text-slate-400 text-xs mt-1">Campaign budget: $2,500 - $5,000</p>
+<p class="text-primary/60 dark:text-primary/40 text-[10px] font-medium mt-1 uppercase tracking-wider">Sponsorship • 2m ago</p>
+</div>
+</div>
+<!-- Social Alert -->
+<div class="flex items-start gap-4 bg-background-light dark:bg-background-dark px-4 py-4 border-b border-primary/5 hover:bg-primary/5 transition-colors cursor-pointer">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-14 ring-1 ring-primary/20" data-alt="Professional portrait of a female creator" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDWfnQMbHkQ7W9IAf_N-0baubgcqzy-pnOib8QX06S4UFqwkvKQz5ZR5L0_Hm8YI_qrnzdzpCfZfAcYzX6RJxcKLKBUwSA3uNi1pX2LNWyp2HiPpJWvL4cigUGscJPtAYd0G6mqDCYicALbRFBPNXc-x28jY8VG6KxnEboSM1XkedXSru_chgxIdr6MxtVSv8sVIZr1hbJY0OQwRz3rLsLKqzYb4vdBCU2Jw9TiJy8UXu5rhRQoN8iPeUWvDt65hwuzzqz7dsvvEQ");'></div>
+<div class="absolute -bottom-1 -right-1 bg-blue-500 text-white size-6 rounded-full flex items-center justify-center border-2 border-background-dark">
+<span class="material-symbols-outlined text-[14px] font-bold">person_add</span>
+</div>
+</div>
+<div class="flex flex-1 flex-col justify-center">
+<p class="text-slate-900 dark:text-slate-100 text-sm font-semibold leading-snug">
+<span class="text-slate-100">Sarah Miller</span> started following you
+                    </p>
+<p class="text-slate-500 dark:text-slate-400 text-xs mt-1">Lifestyle Influencer • 50k followers</p>
+<div class="flex gap-2 mt-2">
+<button class="bg-primary px-4 py-1.5 rounded-full text-xs font-bold text-white hover:opacity-90 transition-opacity">Follow Back</button>
+</div>
+<p class="text-slate-500 dark:text-slate-500 text-[10px] font-medium mt-2 uppercase tracking-wider">Social • 15m ago</p>
+</div>
+</div>
+<!-- Sponsorship Alert 2 -->
+<div class="flex items-start gap-4 bg-background-light dark:bg-background-dark px-4 py-4 border-b border-primary/5 hover:bg-primary/5 transition-colors cursor-pointer">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-xl size-14 ring-1 ring-primary/20" data-alt="Minimalist watch brand logo advertisement" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAaylXDXfS5EtjkMEz9ZgjTYu9b4x2nXIGxCcw7lypndchzTU-EsoW37qI9CzGFtVAzp4XR86B6KFZ8PvmPj7qCe-jzhF5R9q4QWXaLkqe-4-3q5nEnajMZAoN4499wAewFzVpIcykjf5kNiDn5qUd0FkuWQKAu7dCJ-w8DlGFEtGBs5qKettmhVbR7rew_euJkeNME5pKU3l-1v4JWWZozSXj8ut3cUVE0sYojhAVDFqW5krKKftwUFKES_BdJw7UZPBofvT2Lqg");'></div>
+<div class="absolute -bottom-1 -right-1 bg-primary text-white size-6 rounded-full flex items-center justify-center border-2 border-background-dark">
+<span class="material-symbols-outlined text-[14px] font-bold">payments</span>
+</div>
+</div>
+<div class="flex flex-1 flex-col justify-center">
+<p class="text-slate-900 dark:text-slate-100 text-sm font-semibold leading-snug">
+                        Payment of <span class="text-green-400">$1,200.00</span> was processed for 'Urban Classic' campaign
+                    </p>
+<p class="text-slate-500 dark:text-slate-400 text-xs mt-1">Funds will be available in 3-5 business days</p>
+<p class="text-primary/60 dark:text-primary/40 text-[10px] font-medium mt-1 uppercase tracking-wider">Sponsorship • 1h ago</p>
+</div>
+</div>
+<!-- Social Alert 2 -->
+<div class="flex items-start gap-4 bg-background-light dark:bg-background-dark px-4 py-4 border-b border-primary/5 hover:bg-primary/5 transition-colors cursor-pointer">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-14 ring-1 ring-primary/20" data-alt="Close up portrait of a male influencer" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCEFzOjB542H7lHe7tBwyUgNqnUJ-nxO_nM4WE8kDu0jmpEM0OMgU38ZnNhJvxeLckfFzjq4ARNb55LJo1J_Uf5LrttLdIo0Jck-kk3aApUVifmD9_KqupbU6HOiwXEzeWKk4xcsITR5DstB93QSQ3gLQB0WS87t4KR7vLp-LObJB1j8pfAMrV_JSvZKx8g9iaOSdWkMfF_7SP2wTBpLi7N7DSEAfciV8KH8dBywyeZ_E92YZ2ApvnIcWqY4rf9qAkVT0PzzZANDg");'></div>
+<div class="absolute -bottom-1 -right-1 bg-pink-500 text-white size-6 rounded-full flex items-center justify-center border-2 border-background-dark">
+<span class="material-symbols-outlined text-[14px] font-bold">favorite</span>
+</div>
+</div>
+<div class="flex flex-1 flex-col justify-center">
+<p class="text-slate-900 dark:text-slate-100 text-sm font-semibold leading-snug">
+<span class="text-slate-100">Marcus Chen</span> liked your latest post 'Day in the life of a creator'
+                    </p>
+<p class="text-slate-500 dark:text-slate-400 text-xs mt-1">"Love the aesthetic of the new studio!"</p>
+<p class="text-slate-500 dark:text-slate-500 text-[10px] font-medium mt-2 uppercase tracking-wider">Social • 3h ago</p>
+</div>
+</div>
+<!-- Social Alert 3 -->
+<div class="flex items-start gap-4 bg-background-light dark:bg-background-dark px-4 py-4 border-b border-primary/5 hover:bg-primary/5 transition-colors cursor-pointer">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-14 ring-1 ring-primary/20" data-alt="Headshot of a creative professional" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDJLaCtr8B_lO2l0hrSYG0s6KCPxgyPu7f85jRYHrf-xfwYNBX8XuQBKfYrRhWOZn84Q4hqF_oPHnKthMJsLkRQnmgUBbk32CWpFQl0cF-aIz9T8JhhP9THs72-FaYxcFWnm53aU983pXNktpTae-i3CkFKH2SvtwpEgYA4jqBCW4YskndDTxJd3AmBEA264HdSMKlPAxpH7K8YrWW0yU2nz69i_D61nDdqd3FwAljzK6C6f9Ne1I_5k9rBpgWUn7LyvXmdMapU4Q");'></div>
+<div class="absolute -bottom-1 -right-1 bg-purple-500 text-white size-6 rounded-full flex items-center justify-center border-2 border-background-dark">
+<span class="material-symbols-outlined text-[14px] font-bold">chat</span>
+</div>
+</div>
+<div class="flex flex-1 flex-col justify-center">
+<p class="text-slate-900 dark:text-slate-100 text-sm font-semibold leading-snug">
+<span class="text-slate-100">Elena Rossi</span> mentioned you in a comment
+                    </p>
+<p class="text-slate-500 dark:text-slate-400 text-xs mt-1">"@alex_creator this would be perfect for your channel..."</p>
+<p class="text-slate-500 dark:text-slate-500 text-[10px] font-medium mt-2 uppercase tracking-wider">Social • 5h ago</p>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation Bar -->
+<div class="fixed bottom-0 left-0 right-0 z-20 flex flex-col">
+<div class="flex gap-2 border-t border-primary/10 bg-background-light dark:bg-background-dark px-4 pb-6 pt-2 shadow-2xl">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400" href="#">
+<span class="material-symbols-outlined">home</span>
+<p class="text-[10px] font-medium leading-normal">Home</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400" href="#">
+<span class="material-symbols-outlined">explore</span>
+<p class="text-[10px] font-medium leading-normal">Discover</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400" href="#">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">add</span>
+</div>
+<p class="text-[10px] font-medium leading-normal mt-0.5">Create</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined fill-[1]">notifications</span>
+<p class="text-[10px] font-bold leading-normal">Activity</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<p class="text-[10px] font-medium leading-normal">Profile</p>
+</a>
+</div>
+</div>
+</div>
+</body></html>

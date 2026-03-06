@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Nova Logic Studio - Creator & Brand Hub</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/history@5/umd/history.development.js"></script>
+    <script src="https://unpkg.com/react-router@6.3.0/umd/react-router.development.js"></script>
+    <script src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d125f4",
+                        "background-light": "#f8f5f8",
+                        "background-dark": "#1f1022",
+                        "neutral-dark": "#2d1b31",
+                        "neutral-border": "#4a2d52",
+                        "neutral-text": "#b59cba",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: "Spline Sans", sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-color: #1f1022;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-1 {
+            font-variation-settings: 'FILL' 1;
+        }
+        /* Mobile container style */
+        #root {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: #1f1022;
+            position: relative;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { createRoot } = ReactDOM;
+        const { MemoryRouter, Routes, Route, Link, useNavigate, useLocation } = ReactRouterDOM;
+
+        // --- Common Components ---
+
+        const BottomNav = ({ activeTab }) => {
+            const navigate = useNavigate();
+            return (
+                <nav class="fixed bottom-0 z-50 w-full max-w-[430px] bg-background-light dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 pb-safe shadow-[0_-4px_12px_rgba(0,0,0,0.1)]">
+                    <div class="flex items-center justify-around h-20 px-4">
+                        <Link to="/" class={`flex flex-col items-center gap-1 ${activeTab === 'feed' ? 'text-primary' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <span class={`material-symbols-outlined ${activeTab === 'feed' ? 'fill-1' : ''}`}>home</span>
+                            <span class="text-[10px] font-bold">Feed</span>
+                        </Link>
+                        <Link to="/discovery" class={`flex flex-col items-center gap-1 ${activeTab === 'discover' ? 'text-primary' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <span class={`material-symbols-outlined ${activeTab === 'discover' ? 'fill-1' : ''}`}>explore</span>
+                            <span class="text-[10px] font-medium">Discover</span>
+                        </Link>
+                        <Link to="/create-menu" class="flex flex-col items-center -mt-6">
+                            <div class="flex items-center justify-center size-14 bg-primary text-white rounded-full shadow-lg shadow-primary/40 border-4 border-background-light dark:border-background-dark">
+                                <span class="material-symbols-outlined text-3xl">add</span>
+                            </div>
+                            <span class="text-[10px] font-medium mt-1 text-slate-400 dark:text-slate-500">Create</span>
+                        </Link>
+                        <Link to="/campaigns" class={`flex flex-col items-center gap-1 ${activeTab === 'campaigns' ? 'text-primary' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <span class={`material-symbols-outlined ${activeTab === 'campaigns' ? 'fill-1' : ''}`}>campaign</span>
+                            <span class="text-[10px] font-medium">Campaigns</span>
+                        </Link>
+                        <Link to="/profile" class={`flex flex-col items-center gap-1 ${activeTab === 'profile' ? 'text-primary' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <span class={`material-symbols-outlined ${activeTab === 'profile' ? 'fill-1' : ''}`}>person</span>
+                            <span class="text-[10px] font-medium">Profile</span>
+                        </Link>
+                    </div>
+                </nav>
+            );
+        };
+
+        // --- Screens ---
+
+        const FeedScreen = () => {
+            return (
+                <div class="flex min-h-screen w-full flex-col">
+                    <header class="sticky top-0 z-50 flex items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 justify-between border-b border-slate-200 dark:border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary text-3xl">hub</span>
+                            <h1 class="text-slate-900 dark:text-slate-100 text-lg font-bold">Nova Logic Studio</h1>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <Link to="/notifications" class="relative flex items-center justify-center p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+                                <span class="material-symbols-outlined text-slate-700 dark:text-slate-300">notifications</span>
+                                <span class="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-primary"></span>
+                            </Link>
+                            <button class="flex items-center justify-center p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+                                <span class="material-symbols-outlined text-slate-700 dark:text-slate-300">send</span>
+                            </button>
+                        </div>
+                    </header>
+                    <nav class="flex border-b border-slate-200 dark:border-slate-800 px-4">
+                        <a class="flex flex-1 flex-col items-center justify-center border-b-2 border-primary text-primary pb-3 pt-4" href="#">
+                            <span class="text-sm font-bold tracking-wide">For You</span>
+                        </a>
+                        <a class="flex flex-1 flex-col items-center justify-center border-b-2 border-transparent text-slate-500 dark:text-slate-400 pb-3 pt-4 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" href="#">
+                            <span class="text-sm font-bold tracking-wide">Following</span>
+                        </a>
+                        <a class="flex flex-1 flex-col items-center justify-center border-b-2 border-transparent text-slate-500 dark:text-slate-400 pb-3 pt-4 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" href="#">
+                            <span class="text-sm font-bold tracking-wide">Creators</span>
+                        </a>
+                    </nav>
+                    <main class="flex-1 pb-24 overflow-y-auto hide-scrollbar">
+                        <article class="p-4 border-b border-slate-200 dark:border-slate-800">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="size-10 rounded-full bg-primary/20 p-0.5 border border-primary/40">
+                                        <img alt="Creator Profile" class="w-full h-full rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJ5cz2C5D-SHwW8Efi4-g4V_hK6ElemXDH-BwYL6xGPy9giA067lHq9ZdcLaCIKlrlf5LpLPN6oph1ewh5H1ghk0yL2Jew_u-yeG7IFZe4r3p4aJupC6BHbHFlf5IAIjaZj5vZyFwzHcw5lVG2gXGMo1iOUAr1PJX1KdeEl_SbNpYUjxwSIj-9c1pLVtpAEH9lbWmBXS_-AGqejvaK4VybfETeAhUxTcIFYuFj_wjo54bxIQdSE8bDZi88t-xL_QvDYzk83eXoBQ"/>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-slate-900 dark:text-slate-100 text-sm font-bold leading-none">Alex Rivera</h3>
+                                        <p class="text-slate-500 dark:text-slate-400 text-xs mt-1">Digital Creator • LA</p>
+                                    </div>
+                                </div>
+                                <button class="px-4 py-1.5 rounded-full bg-primary/10 dark:bg-primary/20 text-primary text-xs font-bold">Follow</button>
+                            </div>
+                            <div class="relative group">
+                                <div class="w-full aspect-square bg-slate-200 dark:bg-slate-800 rounded-xl overflow-hidden shadow-lg">
+                                    <img alt="Campaign Visual" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDX0zNmkerYMGkcehvSQH4Hd8V_gZTrFn-PK-Wnuy7LSIjILWxkeSCeTNC0Co5t_KNOkdjKxgD7pJeB0Oo1krIKt2kcccBJN3lXktM2pgEVG4UDT5VXcfcndx_rIoZYQAewPhacXrW-Np7qCmCVMpQEUQ904g4-dO8kxxQCSq0LdVOZ_d4oqUqtlisVWd0fz8lkBA9sPSzk3Er1wGcOAK7w1VB2gXZ9Xdif28yRJHMqXih7fQC-SMtAFnJXt0LTdvbb4FYwEbpGbw"/>
+                                </div>
+                                <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between bg-black/40 backdrop-blur-md p-3 rounded-xl border border-white/10">
+                                    <div class="flex-1 mr-3">
+                                        <p class="text-white text-xs font-medium">Exclusive Brand Collaboration</p>
+                                        <p class="text-white/70 text-[10px]">Join Alex's creative circle today.</p>
+                                    </div>
+                                    <button class="whitespace-nowrap bg-primary text-white text-xs font-bold px-4 py-2 rounded-lg">Sign up</button>
+                                </div>
+                            </div>
+                        </article>
+                    </main>
+                    <BottomNav activeTab="feed" />
+                </div>
+            );
+        };
+
+        const CampaignsScreen = () => {
+            return (
+                <div class="flex min-h-screen w-full flex-col">
+                    <header class="sticky top-0 z-20 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10 px-4 pt-6 pb-2">
+                        <div class="flex items-center justify-between mb-4">
+                            <Link to="/discovery-search" class="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                                <span class="material-symbols-outlined">search</span>
+                            </Link>
+                            <h1 class="text-lg font-bold tracking-tight">Campaigns</h1>
+                            <Link to="/notifications" class="flex size-10 items-center justify-end">
+                                <button class="relative text-slate-900 dark:text-slate-100">
+                                    <span class="material-symbols-outlined">notifications</span>
+                                    <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-primary"></span>
+                                </button>
+                            </Link>
+                        </div>
+                        <div class="flex p-1 bg-primary/5 dark:bg-white/5 rounded-xl mb-4">
+                            <button class="flex-1 py-2 text-sm font-semibold rounded-lg bg-white dark:bg-primary shadow-sm text-primary dark:text-white">Sponsorships</button>
+                            <button class="flex-1 py-2 text-sm font-medium text-slate-500 dark:text-slate-400">Gigs</button>
+                        </div>
+                    </header>
+                    <main class="flex-1 overflow-y-auto px-4 pb-24">
+                        <section class="mt-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-xl font-bold">Paid Campaigns</h2>
+                                <span class="text-xs font-medium text-primary">View all</span>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="bg-white dark:bg-white/5 rounded-xl p-4 border border-primary/5 shadow-sm">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div class="flex items-center gap-3">
+                                            <div class="size-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center overflow-hidden">
+                                                <img alt="Brand Logo" class="size-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyH1kCvzeFWYssxBlWT8WTQQcIDY_i7eW6Iug-XrQRRvuqBET_jy8zlNZKRtXU7qbqJdF_mTEF1CKrpJ5isF4Dh9QtmYy6K-RrSzm0Zl3MSGZdAznUQPx5Zck7uayxqRFSu9E15bf91vg0tVgQe0IhZW9GboNWGBexlm7SrXDsVjFsnN28MStTTK7Kj8wvO4GAkm0SlT4S6ZW4-f8AOefhU-CcmrAAssJuEOO7rGEQO4tuldBs7Lgua2k6WXmNg-D5MnQt38v7KQ"/>
+                                            </div>
+                                            <div><h3 class="font-bold text-sm">Lumina Tech</h3><p class="text-[10px] text-slate-500 uppercase tracking-wider">Electronics</p></div>
+                                        </div>
+                                        <div class="bg-primary/10 text-primary px-2 py-1 rounded text-[10px] font-bold">PAID</div>
+                                    </div>
+                                    <p class="text-sm line-clamp-2 mb-4 text-slate-600 dark:text-slate-400">Promote the new Lumina X1 headphones in a 60-second video review.</p>
+                                    <div class="flex items-center justify-between pt-3 border-t border-primary/5">
+                                        <div class="flex gap-2"><span class="material-symbols-outlined text-slate-400 !text-sm">videocam</span><span class="material-symbols-outlined text-slate-400 !text-sm">camera_alt</span></div>
+                                        <div class="text-sm font-bold text-primary">$1,200 - $2,500</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </main>
+                    <BottomNav activeTab="campaigns" />
+                </div>
+            );
+        };
+
+        const CreateMenuScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div class="relative h-screen w-full overflow-hidden bg-slate-950/70 backdrop-blur-[2px]">
+                    <div class="absolute inset-x-0 bottom-0 flex flex-col items-stretch">
+                        <div class="bg-background-light dark:bg-[#2a162d] rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] border-t border-primary/20">
+                            <div class="flex h-8 w-full items-center justify-center">
+                                <div class="h-1.5 w-12 rounded-full bg-slate-400 dark:bg-slate-600/50"></div>
+                            </div>
+                            <div class="px-6 pb-10 pt-2">
+                                <h3 class="text-slate-900 dark:text-white tracking-tight text-2xl font-bold leading-tight text-center mb-8">Create New</h3>
+                                <div class="space-y-4">
+                                    <button onClick={() => navigate('/')} class="flex w-full items-center gap-4 bg-slate-100 dark:bg-primary/5 hover:bg-primary/10 transition-colors p-4 rounded-2xl group border border-transparent hover:border-primary/30">
+                                        <div class="flex items-center justify-center rounded-xl bg-primary/20 text-primary shrink-0 size-14"><span class="material-symbols-outlined text-3xl">add_a_photo</span></div>
+                                        <div class="flex flex-col text-left"><p class="text-slate-900 dark:text-white text-lg font-semibold">Post</p><p class="text-slate-500 dark:text-slate-400 text-sm">Share social content</p></div>
+                                    </button>
+                                    <button onClick={() => navigate('/gig-builder')} class="flex w-full items-center gap-4 bg-slate-100 dark:bg-primary/5 hover:bg-primary/10 transition-colors p-4 rounded-2xl group border border-transparent hover:border-primary/30">
+                                        <div class="flex items-center justify-center rounded-xl bg-primary/20 text-primary shrink-0 size-14"><span class="material-symbols-outlined text-3xl">work</span></div>
+                                        <div class="flex flex-col text-left"><p class="text-slate-900 dark:text-white text-lg font-semibold">Gig</p><p class="text-slate-500 dark:text-slate-400 text-sm">List influencer services</p></div>
+                                    </button>
+                                    <button onClick={() => navigate('/brand-builder')} class="flex w-full items-center gap-4 bg-slate-100 dark:bg-primary/5 hover:bg-primary/10 transition-colors p-4 rounded-2xl group border border-transparent hover:border-primary/30">
+                                        <div class="flex items-center justify-center rounded-xl bg-primary/20 text-primary shrink-0 size-14"><span class="material-symbols-outlined text-3xl">campaign</span></div>
+                                        <div class="flex flex-col text-left"><p class="text-slate-900 dark:text-white text-lg font-semibold">Brand Page</p><p class="text-slate-500 dark:text-slate-400 text-sm">Create a campaign for influencers</p></div>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-around border-t border-slate-200 dark:border-primary/10 bg-slate-50 dark:bg-[#1f1022] px-4 pb-8 pt-3">
+                                <Link to="/" class="flex flex-col items-center gap-1 text-slate-400"><span class="material-symbols-outlined">home</span><p class="text-[10px]">Home</p></Link>
+                                <div class="relative -top-8">
+                                    <Link to="/" class="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white shadow-lg outline outline-8 outline-background-light dark:outline-[#2a162d]">
+                                        <span class="material-symbols-outlined text-4xl font-bold rotate-45">add</span>
+                                    </Link>
+                                </div>
+                                <Link to="/profile" class="flex flex-col items-center gap-1 text-slate-400"><span class="material-symbols-outlined">person</span><p class="text-[10px]">Profile</p></Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const GigBuilderScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div class="flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
+                    <div class="flex items-center p-4 pb-2 justify-between sticky top-0 bg-background-dark/80 backdrop-blur-md z-10">
+                        <button onClick={() => navigate(-1)} class="text-primary flex size-10 items-center justify-center"><span class="material-symbols-outlined text-3xl">arrow_back_ios</span></button>
+                        <h2 class="text-slate-100 text-lg font-bold flex-1 text-center pr-10">Create Gig</h2>
+                    </div>
+                    <div class="p-4 space-y-6 pb-32">
+                        <div class="flex flex-col gap-3">
+                            <p class="text-slate-100 text-sm font-medium uppercase">Step 1 of 3</p>
+                            <div class="rounded-full bg-neutral-border h-1.5 overflow-hidden"><div class="h-full bg-primary" style={{width: '33%'}}></div></div>
+                        </div>
+                        <label class="block space-y-2">
+                            <p class="text-slate-100 font-semibold">Gig Title</p>
+                            <input class="w-full rounded-xl border border-neutral-border bg-neutral-dark text-slate-100 p-4" placeholder="High-quality Tech Review Reel" />
+                        </label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="flex flex-col items-center justify-center p-3 rounded-xl border-2 border-primary bg-primary/10 text-primary"><span class="material-symbols-outlined">movie</span><span class="text-xs">Reel</span></div>
+                            <div class="flex flex-col items-center justify-center p-3 rounded-xl border border-neutral-border bg-neutral-dark text-neutral-text"><span class="material-symbols-outlined">history_toggle_off</span><span class="text-xs">Story</span></div>
+                            <div class="flex flex-col items-center justify-center p-3 rounded-xl border border-neutral-border bg-neutral-dark text-neutral-text"><span class="material-symbols-outlined">podcasts</span><span class="text-xs">Live</span></div>
+                        </div>
+                    </div>
+                    <div class="fixed bottom-0 left-0 right-0 max-w-[430px] mx-auto bg-background-dark/95 border-t border-neutral-border/50 p-4 pb-8 backdrop-blur-lg flex gap-4">
+                        <button class="flex-1 py-4 border border-neutral-border text-slate-100 font-semibold rounded-xl">Save Draft</button>
+                        <button class="flex-[2] py-4 bg-primary text-white font-bold rounded-xl" onClick={() => navigate('/')}>Continue</button>
+                    </div>
+                </div>
+            );
+        };
+
+        const BrandBuilderScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div class="flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-y-auto pb-24">
+                    <div class="flex items-center p-4 justify-between sticky top-0 z-10 bg-background-dark/80 backdrop-blur-md">
+                        <button onClick={() => navigate(-1)} class="text-white"><span class="material-symbols-outlined">arrow_back_ios</span></button>
+                        <h2 class="text-white text-lg font-bold">Create Brand Page</h2>
+                        <div class="w-10"></div>
+                    </div>
+                    <div class="px-4 space-y-8 mt-4">
+                        <div class="flex flex-col items-center py-6 bg-primary/5 rounded-xl border border-primary/10">
+                            <div class="w-32 h-32 rounded-full border-2 border-primary bg-primary/20 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-4xl text-primary">photo_camera</span>
+                            </div>
+                            <p class="mt-4 font-bold">Brand Logo</p>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="font-bold">General Information</h3>
+                            <input class="w-full rounded-lg bg-primary/5 border-primary/20 text-white p-4" placeholder="Page Name" />
+                            <textarea class="w-full rounded-lg bg-primary/5 border-primary/20 text-white p-4" placeholder="Description" rows="4"></textarea>
+                        </div>
+                        <button onClick={() => navigate('/')} class="w-full py-4 bg-primary text-white rounded-xl font-bold shadow-lg">Create Page</button>
+                    </div>
+                </div>
+            );
+        };
+
+        const NotificationsScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div class="flex min-h-screen w-full flex-col bg-background-dark">
+                    <header class="flex items-center p-4 border-b border-primary/10">
+                        <button onClick={() => navigate(-1)}><span class="material-symbols-outlined">arrow_back</span></button>
+                        <h2 class="flex-1 text-center font-bold">Notifications</h2>
+                        <span class="material-symbols-outlined">more_vert</span>
+                    </header>
+                    <div class="divide-y divide-primary/5">
+                        <div class="flex items-start gap-4 p-4 bg-primary/5">
+                            <div class="size-14 rounded-xl bg-primary/20 flex items-center justify-center"><span class="material-symbols-outlined text-primary">campaign</span></div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold"><span class="text-primary">Glow Skin Co.</span> sent a new brief</p>
+                                <p class="text-xs text-slate-400 mt-1">Budget: $2,500 - $5,000</p>
+                                <p class="text-[10px] text-primary/40 mt-1 uppercase">2m ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 p-4">
+                            <div class="size-14 rounded-full bg-slate-700 flex items-center justify-center"><span class="material-symbols-outlined text-blue-500">person_add</span></div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold">Sarah Miller started following you</p>
+                                <button class="mt-2 bg-primary px-4 py-1.5 rounded-full text-xs font-bold text-white">Follow Back</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const ProfileScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div class="flex min-h-screen w-full flex-col pb-24">
+                    <header class="flex items-center justify-between p-4 sticky top-0 bg-background-dark/80 backdrop-blur-md">
+                        <button class="size-10 rounded-full bg-primary/20 flex items-center justify-center"><span class="material-symbols-outlined">settings</span></button>
+                        <h2 class="font-bold">Profile</h2>
+                        <button class="size-10 rounded-full bg-primary/20 flex items-center justify-center"><span class="material-symbols-outlined">qr_code_2</span></button>
+                    </header>
+                    <div class="flex flex-col items-center py-6">
+                        <div class="relative">
+                            <div class="size-32 rounded-full border-4 border-primary p-1">
+                                <div class="w-full h-full rounded-full bg-center bg-cover" style={{backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuA3WQq8lTRSTlc_Md6KCFpLrkh8l3m1MLEFXDHxrxLYN4by6YzmkDqoRtzqEr-vckPD25BPGCVNdW5FzmgSlPqs9mY_q3zNcAUVfImhQK2BZJ3tJR5ibsifujbvIBtEewymfyvPHrk6fYSXIdj7dD7e4osFhN_6vQQapNRyWTy4X5AmaVexG8ooDleXpGg_Sc_LV37Tu0N-egMiyMrUz9Sum_eqnmU4RgqAQNXI2SJnBqGR6htia8EFSdtTh8fm-bN9agf00zc_Zw')`}}></div>
+                            </div>
+                            <div class="absolute bottom-1 right-1 bg-primary text-white size-8 rounded-full flex items-center justify-center border-4 border-background-dark"><span class="material-symbols-outlined text-sm">verified</span></div>
+                        </div>
+                        <h1 class="text-2xl font-bold mt-4">Alex Rivera</h1>
+                        <p class="text-primary/70 font-medium">@alex_influencer</p>
+                        <Link to="/analytics" class="mt-4 bg-primary/10 border border-primary/30 rounded-xl px-6 py-2 flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary">analytics</span>
+                            <div class="flex flex-col"><span class="text-[10px] uppercase font-bold text-primary/80">Social Score</span><span class="text-lg font-bold">850</span></div>
+                        </Link>
+                    </div>
+                    <div class="grid grid-cols-3 gap-0.5 mt-4">
+                        {[1,2,3,4,5,6,7,8,9].map(i => (
+                            <div key={i} class="aspect-square bg-primary/20 bg-center bg-cover" style={{backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuDkkzudx_rE2P91Z1FoEEXszRFjS2naCtvwDk_aiNCd00j5Antg9MqJe4nFSzhU7Ioh8A2ywTOzgNYp5WcMFkLo2qvSJzUUj7n3NXWVKwQqu5gDcVoSXGGwX_EVWnnaPfwVrDOhM6pegL_xwUuw98FRr41_7XVdDkKxFljTsXYz_myPpGLQKib6ajSXWTdDPPdin1jmZU06Ohm9rMOLZZkLOefAgPIcsNnJ8pSII6vv6ttN0FxKFch14qsQ21sfVRb5Ap0eF-aFIA')`}}></div>
+                        ))}
+                    </div>
+                    <BottomNav activeTab="profile" />
+                </div>
+            );
+        };
+
+        const AnalyticsScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div class="flex min-h-screen w-full flex-col bg-background-dark">
+                    <header class="flex items-center p-4 justify-between">
+                        <button onClick={() => navigate(-1)}><span class="material-symbols-outlined">arrow_back</span></button>
+                        <h2 class="font-bold">Social Card Analytics</h2>
+                        <span class="material-symbols-outlined text-primary">share</span>
+                    </header>
+                    <main class="flex-1 overflow-y-auto p-4 space-y-8">
+                        <div class="flex flex-col items-center">
+                            <div class="relative size-48 flex items-center justify-center">
+                                <svg class="absolute size-full -rotate-90">
+                                    <circle class="text-primary/10" cx="96" cy="96" fill="transparent" r="88" stroke="currentColor" stroke-width="12"></circle>
+                                    <circle class="text-primary" cx="96" cy="96" fill="transparent" r="88" stroke="currentColor" stroke-dasharray="552.9" stroke-dashoffset="100" stroke-linecap="round" stroke-width="12"></circle>
+                                </svg>
+                                <div class="text-center"><h1 class="text-5xl font-bold">82</h1><p class="text-primary text-xs uppercase font-bold tracking-widest">/ 100</p></div>
+                            </div>
+                            <p class="text-primary/60 mt-4 text-sm font-medium">Creator Health Index</p>
+                        </div>
+                        <div class="flex gap-4 overflow-x-auto hide-scrollbar">
+                            <div class="min-w-[160px] bg-primary/10 p-5 rounded-xl border border-primary/5">
+                                <p class="text-primary/70 text-sm">Total Reach</p><p class="text-2xl font-bold">1.2M</p>
+                                <div class="flex items-center text-emerald-500 text-sm"><span class="material-symbols-outlined text-sm">trending_up</span><span>+12%</span></div>
+                            </div>
+                            <div class="min-w-[160px] bg-primary/10 p-5 rounded-xl border border-primary/5">
+                                <p class="text-primary/70 text-sm">Engagement</p><p class="text-2xl font-bold">4.5%</p>
+                                <div class="flex items-center text-emerald-500 text-sm"><span class="material-symbols-outlined text-sm">trending_up</span><span>+0.8%</span></div>
+                            </div>
+                        </div>
+                    </main>
+                    <BottomNav activeTab="profile" />
+                </div>
+            );
+        };
+
+        const DiscoveryScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div class="flex min-h-screen w-full flex-col bg-background-dark">
+                    <header class="sticky top-0 bg-background-dark/95 border-b border-primary/10 p-4 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <button onClick={() => navigate(-1)}><span class="material-symbols-outlined">arrow_back</span></button>
+                            <h2 class="font-bold">Discovery</h2>
+                            <Link to="/advanced-filters"><span class="material-symbols-outlined text-primary">tune</span></Link>
+                        </div>
+                        <div class="flex items-center bg-primary/10 border border-primary/20 rounded-xl px-4 h-12">
+                            <span class="material-symbols-outlined text-primary/60">search</span>
+                            <input class="bg-transparent border-none focus:ring-0 text-white flex-1" placeholder="Niche, Keyword, or Location" defaultValue="Fashion Designer" />
+                        </div>
+                        <div class="flex gap-2 overflow-x-auto hide-scrollbar">
+                            <div class="flex items-center gap-1 bg-primary text-white px-3 py-1 rounded-md text-xs">Fashion <span class="material-symbols-outlined text-xs">close</span></div>
+                            <div class="flex items-center gap-1 bg-primary text-white px-3 py-1 rounded-md text-xs">10k-50k <span class="material-symbols-outlined text-xs">close</span></div>
+                            <div class="flex items-center gap-1 bg-primary text-white px-3 py-1 rounded-md text-xs">Score 80+ <span class="material-symbols-outlined text-xs">close</span></div>
+                        </div>
+                    </header>
+                    <main class="flex-1 p-4 space-y-4 pb-24">
+                        <div class="bg-white/5 rounded-2xl p-4 border border-primary/10 shadow-sm">
+                            <div class="flex gap-4">
+                                <img class="size-20 rounded-xl object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqB1H6mxgYtDcaWHtOZ3kCTrMQ1eJCtCL6OMV6IoASUE1gHEeeFnaf_RBDxcNhhvp81Hd3FKVDWDCvnTTBAnrHmT_wajORL35wyqt-FFTZ3PBAFfUuFmIW4S8__-0MQYUv2kqAlgViHyjhWTqRoIoem3stCRhb3DN6tDShdzW8lfPaNfLyFwAT8iOC4OaVJlJ8VuFSLUhaYHzPgnStLwOj6ujeW4CSO3zRNHELNBGWEEJPjC9KRlcYrUukmq8O2usGEE7GK18leQ"/>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start">
+                                        <div><h3 class="font-bold text-lg">Elena Rodriguez</h3><p class="text-primary text-sm">@elenastyle_nyc</p></div>
+                                        <div class="bg-primary/20 rounded-lg px-2 py-1 text-center"><p class="text-[10px] text-primary font-bold">Score</p><p class="text-primary font-bold text-lg">94</p></div>
+                                    </div>
+                                    <div class="mt-3 flex gap-4">
+                                        <div><p class="text-slate-400 text-[10px] uppercase font-bold">Engagement</p><p class="font-semibold">6.2%</p></div>
+                                        <div><p class="text-slate-400 text-[10px] uppercase font-bold">Followers</p><p class="font-semibold">42.8k</p></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="mt-4 w-full py-3 bg-primary rounded-xl text-white font-bold text-sm shadow-lg shadow-primary/20">View Social Card</button>
+                        </div>
+                    </main>
+                    <BottomNav activeTab="discover" />
+                </div>
+            );
+        };
+
+        const AdvancedFiltersScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div class="flex min-h-screen w-full flex-col bg-background-dark">
+                    <header class="flex items-center justify-between p-4 border-b border-primary/10">
+                        <button onClick={() => navigate(-1)}><span class="material-symbols-outlined">close</span></button>
+                        <h1 class="text-xl font-bold">Advanced Filters</h1>
+                        <button class="text-primary font-semibold text-sm">Reset</button>
+                    </header>
+                    <main class="flex-1 p-4 space-y-8">
+                        <div>
+                            <h3 class="text-lg font-bold mb-4">Platforms</h3>
+                            <div class="flex flex-wrap gap-3">
+                                <button class="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white"><span class="material-symbols-outlined text-lg">photo_camera</span><span>Instagram</span></button>
+                                <button class="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 text-slate-300"><span>YouTube</span></button>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold mb-4">Age Range</h3>
+                            <div class="flex justify-between mb-2"><span class="text-sm text-slate-400">Range</span><span class="text-sm font-bold text-primary">18 - 34</span></div>
+                            <div class="h-1.5 bg-primary/10 rounded-full relative">
+                                <div class="absolute left-[20%] right-[40%] h-full bg-primary rounded-full"></div>
+                            </div>
+                        </div>
+                    </main>
+                    <div class="p-4 bg-background-dark/90 backdrop-blur-md border-t border-primary/10">
+                        <button onClick={() => navigate('/discovery-search')} class="w-full bg-primary py-4 rounded-xl text-white font-bold shadow-xl">Show 1,240 Results</button>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- App Shell ---
+
+        const App = () => {
+            return (
+                <MemoryRouter>
+                    <Routes>
+                        <Route path="/" element={<FeedScreen />} />
+                        <Route path="/campaigns" element={<CampaignsScreen />} />
+                        <Route path="/create-menu" element={<CreateMenuScreen />} />
+                        <Route path="/gig-builder" element={<GigBuilderScreen />} />
+                        <Route path="/brand-builder" element={<BrandBuilderScreen />} />
+                        <Route path="/notifications" element={<NotificationsScreen />} />
+                        <Route path="/profile" element={<ProfileScreen />} />
+                        <Route path="/analytics" element={<AnalyticsScreen />} />
+                        <Route path="/discovery" element={<DiscoveryScreen />} />
+                        <Route path="/discovery-search" element={<DiscoveryScreen />} />
+                        <Route path="/advanced-filters" element={<AdvancedFiltersScreen />} />
+                    </Routes>
+                </MemoryRouter>
+            );
+        };
+
+        const container = document.getElementById('root');
+        const root = createRoot(container);
+        root.render(<App />);
+    </script>
+</body>
+</html>

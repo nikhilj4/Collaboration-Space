@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d125f4",
+                        "background-light": "#f8f5f8",
+                        "background-dark": "#1f1022",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Spline Sans', sans-serif;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="relative flex h-screen w-full flex-col overflow-hidden max-w-[430px] mx-auto border-x border-primary/10 shadow-2xl">
+<!-- Header -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between shrink-0">
+<div class="text-slate-900 dark:text-slate-100 flex size-10 items-center justify-center rounded-full hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Social Card Analytics</h2>
+<div class="flex w-10 items-center justify-end">
+<button class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</div>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto hide-scrollbar">
+<!-- Social Score Gauge Area -->
+<div class="relative flex flex-col items-center justify-center pt-8 pb-6 px-4">
+<div class="relative flex items-center justify-center size-48">
+<!-- Gauge Background -->
+<svg class="absolute size-full -rotate-90">
+<circle class="text-primary/10" cx="96" cy="96" fill="transparent" r="88" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-primary" cx="96" cy="96" fill="transparent" r="88" stroke="currentColor" stroke-dasharray="552.9" stroke-dashoffset="100" stroke-linecap="round" stroke-width="12"></circle>
+</svg>
+<div class="flex flex-col items-center">
+<h1 class="text-slate-900 dark:text-slate-100 tracking-tight text-5xl font-bold leading-tight">82</h1>
+<p class="text-primary text-sm font-semibold uppercase tracking-widest">/ 100</p>
+</div>
+</div>
+<p class="text-slate-500 dark:text-primary/60 text-sm font-medium leading-normal mt-4">Creator Health Index</p>
+</div>
+<!-- Horizontal KPIs -->
+<div class="flex gap-4 p-4 overflow-x-auto hide-scrollbar snap-x">
+<div class="flex min-w-[160px] snap-center flex-col gap-2 rounded-xl p-5 bg-white dark:bg-primary/10 border border-primary/5 shadow-sm">
+<p class="text-slate-500 dark:text-primary/70 text-sm font-medium">Total Reach</p>
+<p class="text-slate-900 dark:text-slate-100 text-2xl font-bold">1.2M</p>
+<div class="flex items-center gap-1 text-emerald-500 text-sm font-bold">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>+12%</span>
+</div>
+</div>
+<div class="flex min-w-[160px] snap-center flex-col gap-2 rounded-xl p-5 bg-white dark:bg-primary/10 border border-primary/5 shadow-sm">
+<p class="text-slate-500 dark:text-primary/70 text-sm font-medium">Engagement</p>
+<p class="text-slate-900 dark:text-slate-100 text-2xl font-bold">4.5%</p>
+<div class="flex items-center gap-1 text-emerald-500 text-sm font-bold">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>+0.8%</span>
+</div>
+</div>
+<div class="flex min-w-[160px] snap-center flex-col gap-2 rounded-xl p-5 bg-white dark:bg-primary/10 border border-primary/5 shadow-sm">
+<p class="text-slate-500 dark:text-primary/70 text-sm font-medium">Impressions</p>
+<p class="text-slate-900 dark:text-slate-100 text-2xl font-bold">3.8M</p>
+<div class="flex items-center gap-1 text-rose-500 text-sm font-bold">
+<span class="material-symbols-outlined text-sm">trending_down</span>
+<span>-2%</span>
+</div>
+</div>
+</div>
+<!-- Engagement Graph Section -->
+<div class="p-4">
+<div class="rounded-xl bg-white dark:bg-primary/5 p-4 border border-primary/10">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-slate-900 dark:text-slate-100 font-bold">Engagement Trends</h3>
+<p class="text-xs text-slate-500 dark:text-primary/60 font-medium">Last 30 Days</p>
+</div>
+<!-- Abstract Line Graph -->
+<div class="relative h-40 w-full flex items-end gap-1">
+<div class="flex-1 bg-primary/20 rounded-t-sm h-[40%]" title="Day 1"></div>
+<div class="flex-1 bg-primary/20 rounded-t-sm h-[55%]" title="Day 2"></div>
+<div class="flex-1 bg-primary/40 rounded-t-sm h-[45%]" title="Day 3"></div>
+<div class="flex-1 bg-primary/40 rounded-t-sm h-[70%]" title="Day 4"></div>
+<div class="flex-1 bg-primary/60 rounded-t-sm h-[60%]" title="Day 5"></div>
+<div class="flex-1 bg-primary/80 rounded-t-sm h-[85%]" title="Day 6"></div>
+<div class="flex-1 bg-primary rounded-t-sm h-[75%]" title="Day 7"></div>
+<div class="flex-1 bg-primary/60 rounded-t-sm h-[90%]" title="Day 8"></div>
+<div class="flex-1 bg-primary/40 rounded-t-sm h-[65%]" title="Day 9"></div>
+<div class="flex-1 bg-primary/80 rounded-t-sm h-[100%]" title="Day 10"></div>
+<div class="flex-1 bg-primary rounded-t-sm h-[80%]" title="Day 11"></div>
+<div class="flex-1 bg-primary/40 rounded-t-sm h-[50%]" title="Day 12"></div>
+</div>
+</div>
+</div>
+<!-- Top Content -->
+<div class="p-4 pb-8">
+<h3 class="text-slate-900 dark:text-slate-100 font-bold mb-4">Top Performing Content</h3>
+<div class="space-y-3">
+<!-- Content Card 1 -->
+<div class="flex items-center gap-4 p-3 rounded-xl bg-white dark:bg-primary/10 border border-primary/5">
+<div class="size-16 rounded-lg overflow-hidden shrink-0">
+<img class="size-full object-cover" data-alt="Vibrant aesthetic fashion flatlay" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAA2PV75mxKCUTL9wg1UecQ3MLNMYXFQcbfmMhxa7fZYpcqIMFRW7skzfhItoQK3vzqL28M00rPlKPDQW7xY22DM0KQXmvh6m0teUjramaNxk3k5C7Wne8_-L-BPqtLWAFN_dfbxRvGgTsGwWR-xqj1aMRdSgN8JJA4G5ztYh_Hy_2aTBIrbAU2kyssFEX6Xhmo6CaQgJx--1uFJcoHinPAVooNj-IMPn_h4ltB58ioBP2AZGJDS3V0tmXGNN81Oz7MRl3PbtwhQQ"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-slate-900 dark:text-slate-100 font-semibold truncate">Summer Style Guide 2024</p>
+<p class="text-slate-500 dark:text-primary/60 text-xs mt-1">Published 2d ago</p>
+</div>
+<div class="flex flex-col items-end gap-1 shrink-0">
+<div class="flex items-center gap-1 text-orange-500 font-bold">
+<span class="material-symbols-outlined text-sm">local_fire_department</span>
+<span>12.4k</span>
+</div>
+<p class="text-[10px] text-slate-500 dark:text-primary/40 uppercase tracking-tighter">Heat Score</p>
+</div>
+</div>
+<!-- Content Card 2 -->
+<div class="flex items-center gap-4 p-3 rounded-xl bg-white dark:bg-primary/10 border border-primary/5">
+<div class="size-16 rounded-lg overflow-hidden shrink-0">
+<img class="size-full object-cover" data-alt="Tech setup with neon lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtiV0pO5DKLgkeyYOn7aKuX7dA-VNzmONS9-FsP0j8bIzo2MKDPqkrC_6lAwyt5-VVAxY2KC7fHD-U0RhzNQy3gBlAkTtPl8PvlMMbzWKUFTZjTIggi-VkfBkiJWByXJIZ2r3Lqv53aMxb8Jb7qNvMeHcZBPf_8E2cDC-zWNkou8mnfF-tleXxm9OJKKU-peroq46faMENe0ORhEGAmjDNgcG-yrFaHD_XU5HHpbKkHNIek-ZplQ427EHU7PYjR8Kw1iaOj1AVlw"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-slate-900 dark:text-slate-100 font-semibold truncate">My Creator Workflow Unveiled</p>
+<p class="text-slate-500 dark:text-primary/60 text-xs mt-1">Published 5d ago</p>
+</div>
+<div class="flex flex-col items-end gap-1 shrink-0">
+<div class="flex items-center gap-1 text-orange-500 font-bold">
+<span class="material-symbols-outlined text-sm">local_fire_department</span>
+<span>9.8k</span>
+</div>
+<p class="text-[10px] text-slate-500 dark:text-primary/40 uppercase tracking-tighter">Heat Score</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Primary Action -->
+<div class="px-4 pb-12">
+<button class="w-full bg-primary py-4 rounded-xl text-white font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">share_windows</span>
+                    Share Social Card
+                </button>
+</div>
+</div>
+<!-- Bottom Navigation Bar -->
+<div class="flex gap-2 border-t border-primary/10 bg-white dark:bg-background-dark px-4 pb-6 pt-2 shrink-0">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 dark:text-primary/40" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">explore</span>
+</div>
+<p class="text-xs font-medium leading-normal tracking-[0.015em]">Discover</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 dark:text-primary/40" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">campaign</span>
+</div>
+<p class="text-xs font-medium leading-normal tracking-[0.015em]">Campaigns</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 dark:text-primary/40" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">chat_bubble</span>
+</div>
+<p class="text-xs font-medium leading-normal tracking-[0.015em]">Messages</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-primary" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">account_circle</span>
+</div>
+<p class="text-xs font-medium leading-normal tracking-[0.015em]">Profile</p>
+</a>
+</div>
+</div>
+</body></html>

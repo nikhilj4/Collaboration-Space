@@ -1,0 +1,1 @@
+export type Scr = 'feed' | 'discover' | 'create-menu' | 'gig-builder' | 'brand-builder' | 'campaigns' | 'profile' | 'analytics' | 'notifications' | 'post-creator' | 'campaign-builder' | 'wallet' | 'messaging' | 'withdrawal' | 'gig-detail' | 'campaign-detail' | 'post-comments';

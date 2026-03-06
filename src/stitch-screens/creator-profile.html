@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Creator Profile Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d125f4",
+                        "background-light": "#f8f5f8",
+                        "background-dark": "#1f1022",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Spline Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen font-display">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden pb-24">
+<!-- Header Controls -->
+<div class="flex items-center justify-between p-4 sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md z-10">
+<button class="flex items-center justify-center size-10 rounded-full bg-slate-200 dark:bg-primary/20 text-slate-900 dark:text-slate-100">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<h2 class="text-lg font-bold tracking-tight">Profile</h2>
+<button class="flex items-center justify-center size-10 rounded-full bg-slate-200 dark:bg-primary/20 text-slate-900 dark:text-slate-100">
+<span class="material-symbols-outlined">qr_code_2</span>
+</button>
+</div>
+<!-- Profile Overview -->
+<div class="flex flex-col items-center px-4 py-6 gap-4">
+<div class="relative">
+<div class="size-32 rounded-full border-4 border-primary p-1">
+<div class="w-full h-full rounded-full bg-center bg-cover" data-alt="Professional creator headshot portrait smiling" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA3WQq8lTRSTlc_Md6KCFpLrkh8l3m1MLEFXDHxrxLYN4by6YzmkDqoRtzqEr-vckPD25BPGCVNdW5FzmgSlPqs9mY_q3zNcAUVfImhQK2BZJ3tJR5ibsifujbvIBtEewymfyvPHrk6fYSXIdj7dD7e4osFhN_6vQQapNRyWTy4X5AmaVexG8ooDleXpGg_Sc_LV37Tu0N-egMiyMrUz9Sum_eqnmU4RgqAQNXI2SJnBqGR6htia8EFSdtTh8fm-bN9agf00zc_Zw')">
+</div>
+</div>
+<div class="absolute bottom-1 right-1 bg-primary text-white size-8 rounded-full flex items-center justify-center border-4 border-background-dark">
+<span class="material-symbols-outlined text-sm">verified</span>
+</div>
+</div>
+<div class="text-center">
+<h1 class="text-2xl font-bold">Alex Rivera</h1>
+<p class="text-slate-500 dark:text-primary/70 font-medium">@alex_influencer</p>
+</div>
+<!-- Social Score Badge -->
+<div class="bg-primary/10 border border-primary/30 rounded-xl px-6 py-2 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">analytics</span>
+<div class="flex flex-col">
+<span class="text-[10px] uppercase tracking-widest text-primary/80 font-bold">Social Score</span>
+<span class="text-lg font-bold leading-none">850</span>
+</div>
+</div>
+</div>
+<!-- Progress Section -->
+<div class="px-4 mb-6">
+<div class="bg-slate-100 dark:bg-primary/5 rounded-2xl p-4 border border-slate-200 dark:border-primary/10">
+<div class="flex justify-between items-center mb-2">
+<span class="text-sm font-semibold">Complete your profile</span>
+<span class="text-xs font-bold text-primary">75%</span>
+</div>
+<div class="h-2 w-full bg-slate-200 dark:bg-primary/20 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 75%;"></div>
+</div>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-3 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">info</span>
+                    Add your portfolio to reach 100% and unlock brands
+                </p>
+</div>
+</div>
+<!-- Quick Edit Chips -->
+<div class="flex gap-2 px-4 overflow-x-auto no-scrollbar mb-8">
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-200 dark:bg-primary/10 whitespace-nowrap text-sm font-medium border border-transparent hover:border-primary/30">
+<span class="material-symbols-outlined text-sm">person</span> Personal
+            </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-200 dark:bg-primary/10 whitespace-nowrap text-sm font-medium border border-transparent hover:border-primary/30">
+<span class="material-symbols-outlined text-sm">badge</span> About Me
+            </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-200 dark:bg-primary/10 whitespace-nowrap text-sm font-medium border border-transparent hover:border-primary/30">
+<span class="material-symbols-outlined text-sm">category</span> Categories
+            </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-200 dark:bg-primary/10 whitespace-nowrap text-sm font-medium border border-transparent hover:border-primary/30">
+<span class="material-symbols-outlined text-sm">share</span> Socials
+            </button>
+</div>
+<!-- Tabs Navigation -->
+<div class="flex border-b border-slate-200 dark:border-primary/10 px-4">
+<button class="flex-1 py-3 text-sm font-bold text-slate-400">Info</button>
+<button class="flex-1 py-3 text-sm font-bold text-primary border-b-2 border-primary">Posts</button>
+<button class="flex-1 py-3 text-sm font-bold text-slate-400">My Page</button>
+</div>
+<!-- Post Grid History -->
+<div class="grid grid-cols-3 gap-0.5 mt-0.5">
+<div class="aspect-square bg-slate-300 dark:bg-primary/20 bg-cover bg-center relative group" data-alt="Laptop on a minimalist white desk" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDkkzudx_rE2P91Z1FoEEXszRFjS2naCtvwDk_aiNCd00j5Antg9MqJe4nFSzhU7Ioh8A2ywTOzgNYp5WcMFkLo2qvSJzUUj7n3NXWVKwQqu5gDcVoSXGGwX_EVWnnaPfwVrDOhM6pegL_xwUuw98FRr41_7XVdDkKxFljTsXYz_myPpGLQKib6ajSXWTdDPPdin1jmZU06Ohm9rMOLZZkLOefAgPIcsNnJ8pSII6vv6ttN0FxKFch14qsQ21sfVRb5Ap0eF-aFIA')">
+<div class="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined text-white">favorite</span>
+</div>
+</div>
+<div class="aspect-square bg-slate-300 dark:bg-primary/20 bg-cover bg-center relative" data-alt="Modern headphones on a wooden surface" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCk-cHjnpwrzaqkNxXt9VN1RySwvLEu2Ol4I5Z8yJzeu-5YENakGx1rb5EMsz300ZQZTTHHRqK_ijLNedfHIsytLCvpEa6loZy_jgUk-4hAYugrQroOufGyIZqecJ_VKSfxD-TTK0Q6UkCzwwB-PLgtaJL3GpwX2q5YGxAgwDQUGpyEOxdA-HHEttVRUOfUsF8NDgnalSZGvFwS9lDtLldT6_YLmZ-8USQWqU3rpnjq-JRK0OkPcDSK8_1ckpNR0x1S_gNi0ble6w')">
+<div class="absolute top-2 right-2"><span class="material-symbols-outlined text-white text-sm">play_circle</span></div>
+</div>
+<div class="aspect-square bg-slate-300 dark:bg-primary/20 bg-cover bg-center" data-alt="Hands writing in a creative journal" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCYSDBCPqCbkWx80asiyA0zEQI7Fhb1erUSvSjQyN_0nA-fVOIZ0YmIMaCYcBbbNABKn0sTA8JlB849IB49N8GbDNDU4pq8rPVLuCWWm2rfX_IG4shL14iUA2gGf6ZnZBQyOlPi6mWiEEeyuDbx3HgD2WjzIJ0d1-C45nVV74L_6A_JPIgrTII4Ulw2Sd-sqosBvtlxTuvjF4U9qrR6HLemOTcul1yfgV8KbDIMTAR7cawrXi8zPmWAN1URcT4KlpP-bPSMv47FDQ')">
+</div>
+<div class="aspect-square bg-slate-300 dark:bg-primary/20 bg-cover bg-center" data-alt="Group of creators collaborating together" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB8j760oEwZRney5JD1NNAZRpBxSLopmEHnm2YBuxhnFYdEoWn9ngun6UkJcmnzdqZwn0i8p-L0XVp3jW4Ac9Ymg1LUWkQpgRHdyNOxZEa62xfAiCRbrzGzFL9eqk4Y4zezzlLhUD0Kd6GxZau557WM5P6zD5yiF9Q1EcXQxYyA2mSgEPevw1vtlVpLSlEm8OoAAcIIXDPtWBvHRxcRmh37_ywwTilt10uDIJMLg5yHUpPIB8XrPzj2M4YgkAjPX1s5a8TPXU8Nmw')">
+</div>
+<div class="aspect-square bg-slate-300 dark:bg-primary/20 bg-cover bg-center" data-alt="Abstract colorful digital art pattern" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuACmbGHQj1Jz8hLlGWVizTKYl3uP3eTWHw0dcPoOAoUYNwtsJcjr-iRmywskU_DDVR87f7YVrJL7FZoQxrW438d_Rih3UORoMmLItH2ANz0UXzb2iiLdSTbRG_OGb65s8O0S-04Y_T23wghkzG_vK-lcl36I4uSCQdqzTSIFiyGbapH6rugTYP_-ND4Ja4gimWA--cETs3i8kOvPZO72I7jqH5XCB2zvq8529Kvvb4zvgsAvDeio1L_pgVNIzKvNhjlmdjzLiSlGA')">
+</div>
+<div class="aspect-square bg-slate-300 dark:bg-primary/20 bg-cover bg-center relative" data-alt="Strategic meeting in a bright office" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDf-6lhVVJSAOWK5XywUHKae1oGP6qGciNMvE8SSCVTmz650UejopZZMZWUpdPG1DF4qRWsHyq9is6P8eh9lCGJhojR1QLIrtFPNAbA4hBjwy90EIBHO1FJkL01yWbPFb9_5gbyVVeZpmV0srQR6JyD5-t62ISyNAfy1S7ZSM7Z-irYJUgbCSNZVPPii8BdBfZLjdSTP3armf2UosjuVxIruy9_CnK4-G4OI7nN0JgL1r29IbXckJevwkXa6I09jljjDPRiWcmXaw')">
+<div class="absolute top-2 right-2"><span class="material-symbols-outlined text-white text-sm">filter_none</span></div>
+</div>
+<div class="aspect-square bg-slate-300 dark:bg-primary/20 bg-cover bg-center" data-alt="Close up of a professional camera" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBioT4v1_eo9UARVPhFhMqh8pHx3QHAGJ19NEE5GX-8Z7sQsqYZ_6ZWybrC-pPAZ3PMmRCm3ptCu26E0wdLXMPPKApK4KDGxUU5INAnNF_dxrIpb4vinoqjqTrEgl-E3lNCvhg0kOKZMmI1-DSW3_7GD-ljsAblf-_C6j-1KKic2OPvRK9S77bzEjyYqkRiYaco9hvO6O2mJVjbZhodEDT3DXiInyG6DpMhG9RzZXrO08wuBDnisMiCA_mFfXFvqURhpjxTXcRwRA')">
+</div>
+<div class="aspect-square bg-slate-300 dark:bg-primary/20 bg-cover bg-center" data-alt="People laughing at a social gathering" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAnT9cOajv7We_w7TTK3WvHcBzLwzjYYLtNBeT6hOTPHwCstIVa_mHHINb6LItZKS3Qssu3rr7CQoICNTQa-AgxF9lTFjcyrQPbokWxxL4jUHUFWpYXQ4rRrS8oonR8o-nho_43mgNLFKv0LUhDLTDgBIhKrZJo5AE0x7FTNWSa-T8822TMBgbVaKMGOW5HmTzxXl75_4vgbV9rctNZNS8UUd7wGyy8oew1tAoqJ-cqW7E4JrWd9JQ0gyOUCvf9Zc7BVrZLNLnRIA')">
+</div>
+<div class="aspect-square bg-slate-300 dark:bg-primary/20 bg-cover bg-center" data-alt="Data charts on a computer screen" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBvKVgEoqBGr9PV0Huq3O_kFIJP07G_0de7cXxQiLVtGQ2HPdssDlvApecloMqHWUJn_GCRFGjIS6G3bp7ZyZkav678OVHbIsFNbS5mcIT8HgWyqGgl_Ycj2bP_X8cJBQRRqz0GAtg_xEI9EUGNJ3Jj2fNLLb5o9MoTQEEH5-ZePD1RlVejzsvWI-EsrD9TLjkoAwOfbe5Cn5-P8JYUoCMNGG9lLMjEW_0nT6tkBy8ZReuvORiGzudIspHPl_EZiLyjxxVH0fHSCQ')">
+</div>
+</div>
+<!-- Bottom NavBar -->
+<div class="fixed bottom-0 left-0 w-full z-50">
+<div class="flex gap-2 border-t border-slate-200 dark:border-primary/20 bg-white dark:bg-background-dark/95 backdrop-blur-lg px-4 pb-8 pt-3 shadow-2xl">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400" href="#">
+<div class="flex h-6 items-center justify-center">
+<span class="material-symbols-outlined">home</span>
+</div>
+<p class="text-[10px] font-medium uppercase tracking-wider">Home</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400" href="#">
+<div class="flex h-6 items-center justify-center">
+<span class="material-symbols-outlined">storefront</span>
+</div>
+<p class="text-[10px] font-medium uppercase tracking-wider">Market</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1" href="#">
+<div class="flex h-12 w-12 -mt-6 items-center justify-center bg-primary rounded-full text-white shadow-lg shadow-primary/40 border-4 border-white dark:border-background-dark">
+<span class="material-symbols-outlined">add</span>
+</div>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400" href="#">
+<div class="flex h-6 items-center justify-center">
+<span class="material-symbols-outlined">chat_bubble</span>
+</div>
+<p class="text-[10px] font-medium uppercase tracking-wider">Chats</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<div class="flex h-6 items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">person</span>
+</div>
+<p class="text-[10px] font-bold uppercase tracking-wider">Profile</p>
+</a>
+</div>
+</div>
+</div>
+</body></html>

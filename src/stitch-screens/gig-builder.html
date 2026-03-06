@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#d125f4",
+              "background-light": "#f8f5f8",
+              "background-dark": "#1f1022",
+              "neutral-dark": "#2d1b31",
+              "neutral-border": "#4a2d52",
+              "neutral-text": "#b59cba",
+            },
+            fontFamily: {
+              "display": ["Spline Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<title>Gig Builder Form</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden max-w-md mx-auto border-x border-neutral-border/20">
+<!-- Top App Bar -->
+<div class="flex items-center p-4 pb-2 justify-between sticky top-0 bg-background-dark/80 backdrop-blur-md z-10">
+<div class="text-primary flex size-10 shrink-0 items-center justify-center">
+<span class="material-symbols-outlined text-3xl">arrow_back_ios</span>
+</div>
+<h2 class="text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-10">Create Gig</h2>
+</div>
+<!-- Progress Indicator -->
+<div class="flex flex-col gap-3 p-4">
+<div class="flex gap-6 justify-between">
+<p class="text-slate-100 text-sm font-medium uppercase tracking-wider">Step 1 of 3</p>
+</div>
+<div class="rounded-full bg-neutral-border h-1.5 overflow-hidden">
+<div class="h-full rounded-full bg-primary" style="width: 33%;"></div>
+</div>
+<p class="text-neutral-text text-sm font-normal">Basic Details &amp; Deliverables</p>
+</div>
+<!-- Form Sections -->
+<div class="flex flex-col gap-6 px-4 py-2 pb-32">
+<!-- Basic Details -->
+<div class="flex flex-col gap-4">
+<label class="flex flex-col w-full">
+<p class="text-slate-100 text-base font-semibold pb-2">Gig Title</p>
+<input class="form-input flex w-full rounded-xl text-slate-100 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-neutral-border bg-neutral-dark h-14 placeholder:text-neutral-text/50 p-4 text-base font-normal" placeholder="e.g. High-quality Tech Review Reel" type="text"/>
+</label>
+<label class="flex flex-col w-full">
+<p class="text-slate-100 text-base font-semibold pb-2">Description</p>
+<textarea class="form-input flex w-full rounded-xl text-slate-100 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-neutral-border bg-neutral-dark min-h-32 placeholder:text-neutral-text/50 p-4 text-base font-normal resize-none" placeholder="Describe what you offer to brands..."></textarea>
+</label>
+</div>
+<!-- Content Type Selection Grid -->
+<div class="flex flex-col gap-3">
+<h3 class="text-slate-100 text-base font-semibold">Content Type</h3>
+<div class="grid grid-cols-3 gap-3">
+<div class="flex flex-col items-center justify-center p-3 rounded-xl border-2 border-primary bg-primary/10 text-primary">
+<span class="material-symbols-outlined mb-1">movie</span>
+<span class="text-xs font-medium">Reel</span>
+</div>
+<div class="flex flex-col items-center justify-center p-3 rounded-xl border border-neutral-border bg-neutral-dark text-neutral-text hover:border-primary/50">
+<span class="material-symbols-outlined mb-1">history_toggle_off</span>
+<span class="text-xs font-medium">Story</span>
+</div>
+<div class="flex flex-col items-center justify-center p-3 rounded-xl border border-neutral-border bg-neutral-dark text-neutral-text hover:border-primary/50">
+<span class="material-symbols-outlined mb-1">podcasts</span>
+<span class="text-xs font-medium">Live</span>
+</div>
+<div class="flex flex-col items-center justify-center p-3 rounded-xl border border-neutral-border bg-neutral-dark text-neutral-text hover:border-primary/50">
+<span class="material-symbols-outlined mb-1">view_carousel</span>
+<span class="text-xs font-medium">Carousel</span>
+</div>
+<div class="flex flex-col items-center justify-center p-3 rounded-xl border border-neutral-border bg-neutral-dark text-neutral-text hover:border-primary/50">
+<span class="material-symbols-outlined mb-1">photo_library</span>
+<span class="text-xs font-medium">Post</span>
+</div>
+<div class="flex flex-col items-center justify-center p-3 rounded-xl border border-neutral-border bg-neutral-dark text-neutral-text hover:border-primary/50">
+<span class="material-symbols-outlined mb-1">video_library</span>
+<span class="text-xs font-medium">Long-form</span>
+</div>
+</div>
+</div>
+<!-- Target Audience Dropdowns -->
+<div class="flex flex-col gap-4">
+<h3 class="text-slate-100 text-base font-semibold">Target Audience</h3>
+<div class="grid grid-cols-2 gap-4">
+<label class="flex flex-col gap-2">
+<p class="text-neutral-text text-xs uppercase font-bold tracking-wider">Age Range</p>
+<div class="relative">
+<select class="appearance-none w-full rounded-xl border border-neutral-border bg-neutral-dark text-slate-100 p-4 pr-10 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none">
+<option>18 - 24</option>
+<option>25 - 34</option>
+<option>35 - 44</option>
+<option>45+</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-neutral-text pointer-events-none">expand_more</span>
+</div>
+</label>
+<label class="flex flex-col gap-2">
+<p class="text-neutral-text text-xs uppercase font-bold tracking-wider">Gender</p>
+<div class="relative">
+<select class="appearance-none w-full rounded-xl border border-neutral-border bg-neutral-dark text-slate-100 p-4 pr-10 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none">
+<option>All</option>
+<option>Female</option>
+<option>Male</option>
+<option>Non-binary</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-neutral-text pointer-events-none">expand_more</span>
+</div>
+</label>
+</div>
+<label class="flex flex-col gap-2">
+<p class="text-neutral-text text-xs uppercase font-bold tracking-wider">Language</p>
+<div class="relative">
+<select class="appearance-none w-full rounded-xl border border-neutral-border bg-neutral-dark text-slate-100 p-4 pr-10 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none">
+<option>English</option>
+<option>Spanish</option>
+<option>French</option>
+<option>Hindi</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-neutral-text pointer-events-none">expand_more</span>
+</div>
+</label>
+</div>
+<!-- Pricing Section -->
+<div class="flex flex-col gap-4">
+<h3 class="text-slate-100 text-base font-semibold">Base Price</h3>
+<div class="flex items-center gap-3 w-full">
+<div class="flex items-center bg-neutral-dark border border-neutral-border rounded-xl px-4 py-4 w-24">
+<span class="text-slate-100 font-bold">USD</span>
+</div>
+<div class="flex-1 relative">
+<input class="form-input w-full rounded-xl text-slate-100 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-neutral-border bg-neutral-dark h-14 p-4 text-xl font-bold" placeholder="0.00" type="number"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-text text-sm">per gig</span>
+</div>
+</div>
+<p class="text-neutral-text text-xs italic">Platform fee of 10% will be applied to final payout.</p>
+</div>
+</div>
+<!-- Sticky Bottom Navigation -->
+<div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-background-dark/95 border-t border-neutral-border/50 p-4 pb-8 backdrop-blur-lg flex gap-4">
+<button class="flex-1 py-4 px-6 rounded-xl border border-neutral-border text-slate-100 font-semibold hover:bg-neutral-dark transition-colors">
+                Save Draft
+            </button>
+<button class="flex-[2] py-4 px-6 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+                Continue
+                <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</body></html>

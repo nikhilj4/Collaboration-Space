@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d125f4",
+                        "background-light": "#f8f5f8",
+                        "background-dark": "#1f1022",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>Brand Page Builder</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden max-w-[430px] mx-auto border-x border-primary/10">
+<!-- Top Navigation -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10 backdrop-blur-md bg-opacity-80">
+<div class="text-slate-900 dark:text-slate-100 flex size-10 shrink-0 items-center justify-center cursor-pointer">
+<span class="material-symbols-outlined">arrow_back_ios</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-10">Create Brand Page</h2>
+</div>
+<form class="flex flex-col gap-6 pb-24">
+<!-- Page Identity Section -->
+<div class="px-4">
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight pt-4 pb-2">Page Identity</h2>
+<div class="flex flex-col items-center py-6 bg-primary/5 rounded-xl border border-primary/10">
+<div class="relative group">
+<div class="bg-primary/20 bg-center bg-no-repeat aspect-square bg-cover rounded-full min-h-32 w-32 border-2 border-primary flex items-center justify-center overflow-hidden" data-alt="Circular placeholder for brand profile logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC8ND-17m5-Mce2bgLP3qTwVqGbtbHLvwp3L7cjhDkTPgXWoaKYwlne5dLXujZv5TRc87D7SYkbPQXtZdowxg8TH5VNJm7ghEYDKxSfRITJITxVvYvatpw72VppcyF9NdRHUJGXjZUSJXCEBItV3CZrSyiDVpwhgwg2MUxoN9O3srVOA-1EzPQAEOQfDGX7Df56vEcXs1uyjHx3Yc33V7nX_DBkK-Ka7cY6v_gueoGSyherUhcCGpEkrKNj-3H5FkVYtFwdxxw_vg");'>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white">photo_camera</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center mt-4">
+<p class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight">Brand Logo</p>
+<p class="text-primary/60 text-xs font-normal leading-normal text-center">Recommended: 400x400px PNG or JPG</p>
+</div>
+<button class="mt-4 flex min-w-[120px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal transition-colors hover:bg-primary/90" type="button">
+<span>Upload Logo</span>
+</button>
+</div>
+</div>
+<!-- Cover Image Section -->
+<div class="px-4">
+<div class="flex justify-between items-end pb-3">
+<h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight">Cover Image</h3>
+<span class="text-primary text-sm font-medium">Change</span>
+</div>
+<div class="w-full bg-primary/10 bg-center bg-no-repeat bg-cover flex flex-col items-center justify-center overflow-hidden rounded-xl min-h-[160px] border-2 border-dashed border-primary/30" data-alt="Rectangular placeholder for brand banner image" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC2UbqEA58SsvjnfDZ8kO88sSKX1lwCLtvEbY5JBh9lL_1dxuHfY8leFTmhTKx2rPaxWF1pHbhS7n-8NzHcTmnXW8FHZaYgPKIk2TixsrOTXSvx6VTPMmgmsVdc5CkiOk7b-I7uGWo1gJ5mnNjhAusUijR5eGmMYMRpL2lwy9iHQfjTvoYzIevWUnQtXPe6FCLEVeWBy-xgeTiPYnqFKU7Qa__fPvCsFw6FlLaz2RuGKCr17g9gmwS6hNnJVhy0Zll6S4ZCTIKKxg");'>
+<span class="material-symbols-outlined text-primary/40 text-4xl">add_photo_alternate</span>
+<p class="text-primary/60 text-xs mt-2">1500x500px suggested</p>
+</div>
+</div>
+<!-- General Info Section -->
+<div class="px-4 flex flex-col gap-4">
+<h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight">General Information</h3>
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Page Name</label>
+<input class="w-full rounded-lg bg-primary/5 border-primary/20 focus:border-primary focus:ring-1 focus:ring-primary text-slate-900 dark:text-slate-100 h-12 px-4" placeholder="e.g. Lumina Creative Agency" type="text"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Website</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-primary/60 material-symbols-outlined text-sm">link</span>
+<input class="w-full rounded-lg bg-primary/5 border-primary/20 focus:border-primary focus:ring-1 focus:ring-primary text-slate-900 dark:text-slate-100 h-12 pl-11 pr-4" placeholder="https://yourbrand.com" type="url"/>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Description</label>
+<textarea class="w-full rounded-lg bg-primary/5 border-primary/20 focus:border-primary focus:ring-1 focus:ring-primary text-slate-900 dark:text-slate-100 p-4" placeholder="Tell us about your brand..." rows="4"></textarea>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Category</label>
+<select class="w-full rounded-lg bg-primary/5 border-primary/20 focus:border-primary focus:ring-1 focus:ring-primary text-slate-900 dark:text-slate-100 h-12 px-4 appearance-none">
+<option>Marketing</option>
+<option>Technology</option>
+<option>Fashion</option>
+<option>Food &amp; Bev</option>
+</select>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Employees</label>
+<select class="w-full rounded-lg bg-primary/5 border-primary/20 focus:border-primary focus:ring-1 focus:ring-primary text-slate-900 dark:text-slate-100 h-12 px-4 appearance-none">
+<option>1-10</option>
+<option>11-50</option>
+<option>51-200</option>
+<option>201-500</option>
+<option>500+</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Location Section -->
+<div class="px-4 flex flex-col gap-4">
+<h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight">Location</h3>
+<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Country</label>
+<select class="w-full rounded-lg bg-primary/5 border-primary/20 focus:border-primary focus:ring-1 focus:ring-primary text-slate-900 dark:text-slate-100 h-12 px-4">
+<option>United States</option>
+<option>Canada</option>
+<option>United Kingdom</option>
+<option>Australia</option>
+</select>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">State/Province</label>
+<input class="w-full rounded-lg bg-primary/5 border-primary/20 focus:border-primary focus:ring-1 focus:ring-primary text-slate-900 dark:text-slate-100 h-12 px-4" placeholder="California" type="text"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">City</label>
+<input class="w-full rounded-lg bg-primary/5 border-primary/20 focus:border-primary focus:ring-1 focus:ring-primary text-slate-900 dark:text-slate-100 h-12 px-4" placeholder="Los Angeles" type="text"/>
+</div>
+</div>
+</div>
+<!-- Location Map Placeholder -->
+<div class="mt-2 w-full h-32 bg-primary/5 rounded-xl border border-primary/10 relative overflow-hidden flex items-center justify-center">
+<div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent"></div>
+<span class="material-symbols-outlined text-primary text-3xl">location_on</span>
+<p class="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] text-primary/60 font-bold uppercase tracking-widest">Pin Location</p>
+</div>
+</div>
+<!-- Verification & Action -->
+<div class="px-4 mt-4 mb-8">
+<label class="flex items-start gap-3 cursor-pointer group">
+<div class="relative flex items-center pt-0.5">
+<input class="peer h-5 w-5 rounded border-primary/30 bg-primary/5 text-primary focus:ring-primary" type="checkbox"/>
+</div>
+<span class="text-sm text-slate-600 dark:text-slate-400 leading-snug">
+                        I verify that I am an authorized representative of this brand and have the right to create this page.
+                    </span>
+</label>
+<div class="mt-8 flex flex-col gap-4">
+<button class="w-full py-4 bg-primary text-white rounded-xl font-bold text-lg shadow-lg shadow-primary/20 hover:shadow-primary/40 active:scale-[0.98] transition-all" type="submit">
+                        Create Page
+                    </button>
+<button class="w-full py-2 text-primary/60 text-sm font-medium text-center" type="button">
+                        Need help? Contact support
+                    </button>
+</div>
+</div>
+</form>
+<!-- Bottom Tab Bar Placeholder (Mobile UI Feel) -->
+<div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-background-light dark:bg-background-dark border-t border-primary/10 px-8 py-3 flex justify-between items-center z-20 h-16">
+<span class="material-symbols-outlined text-primary">home</span>
+<span class="material-symbols-outlined text-slate-400">search</span>
+<div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center -mt-8 border-4 border-background-dark shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white">add</span>
+</div>
+<span class="material-symbols-outlined text-slate-400">chat_bubble</span>
+<span class="material-symbols-outlined text-slate-400">person</span>
+</div>
+</div>
+</body></html>

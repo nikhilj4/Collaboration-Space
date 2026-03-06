@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Influencer Discovery Search Results</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d125f4",
+                        "background-light": "#f8f5f8",
+                        "background-dark": "#1f1022",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Header & Search -->
+<header class="sticky top-0 z-50 bg-background-light dark:bg-background-dark/95 backdrop-blur-md border-b border-primary/10">
+<div class="flex items-center p-4 pb-2 justify-between">
+<div class="text-slate-900 dark:text-slate-100 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 text-center">Discovery</h2>
+<div class="flex size-10 items-center justify-end">
+<span class="material-symbols-outlined text-primary">tune</span>
+</div>
+</div>
+<!-- Search Bar -->
+<div class="px-4 py-3">
+<label class="flex flex-col w-full">
+<div class="flex w-full items-stretch rounded-xl bg-primary/5 dark:bg-primary/10 border border-primary/20 h-12">
+<div class="text-primary/60 flex items-center justify-center pl-4">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full border-none bg-transparent focus:ring-0 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 px-3 text-base font-normal" placeholder="Niche, Keyword, or Location" value="Fashion Designer"/>
+</div>
+</label>
+</div>
+<!-- Horizontal Filters -->
+<div class="flex gap-2 px-4 pb-4 overflow-x-auto no-scrollbar">
+<button class="flex h-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary/20 border border-primary/30 px-4">
+<span class="text-primary text-sm font-semibold">Category</span>
+<span class="material-symbols-outlined text-primary text-lg">expand_more</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary/20 border border-primary/30 px-4">
+<span class="text-primary text-sm font-semibold">Followers</span>
+<span class="material-symbols-outlined text-primary text-lg">expand_more</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary/20 border border-primary/30 px-4">
+<span class="text-primary text-sm font-semibold">Social Score</span>
+<span class="material-symbols-outlined text-primary text-lg">expand_more</span>
+</button>
+</div>
+<!-- Active Filter Tags -->
+<div class="flex gap-2 px-4 pb-4 overflow-x-auto no-scrollbar border-b border-primary/5">
+<div class="flex h-7 shrink-0 items-center gap-1 rounded-md bg-primary text-white px-3">
+<span class="text-xs font-medium">Fashion</span>
+<span class="material-symbols-outlined text-xs">close</span>
+</div>
+<div class="flex h-7 shrink-0 items-center gap-1 rounded-md bg-primary text-white px-3">
+<span class="text-xs font-medium">10k-50k</span>
+<span class="material-symbols-outlined text-xs">close</span>
+</div>
+<div class="flex h-7 shrink-0 items-center gap-1 rounded-md bg-primary text-white px-3">
+<span class="text-xs font-medium">Score 80+</span>
+<span class="material-symbols-outlined text-xs">close</span>
+</div>
+</div>
+</header>
+<!-- Main Content: Influencer List -->
+<main class="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+<!-- Creator Card 1 -->
+<div class="bg-primary/5 dark:bg-white/5 rounded-2xl p-4 border border-primary/10 shadow-sm">
+<div class="flex gap-4">
+<div class="relative">
+<img class="size-20 rounded-xl object-cover border-2 border-primary/20" data-alt="Close up portrait of a stylish female influencer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqB1H6mxgYtDcaWHtOZ3kCTrMQ1eJCtCL6OMV6IoASUE1gHEeeFnaf_RBDxcNhhvp81Hd3FKVDWDCvnTTBAnrHmT_wajORL35wyqt-FFTZ3PBAFfUuFmIW4S8__-0MQYUv2kqAlgViHyjhWTqRoIoem3stCRhb3DN6tDShdzW8lfPaNfLyFwAT8iOC4OaVJlJ8VuFSLUhaYHzPgnStLwOj6ujeW4CSO3zRNHELNBGWEEJPjC9KRlcYrUukmq8O2usGEE7GK18leQ"/>
+<div class="absolute -bottom-1 -right-1 bg-primary text-white rounded-full p-0.5 border-2 border-background-dark">
+<span class="material-symbols-outlined text-[14px] block">verified</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-slate-900 dark:text-slate-100 font-bold text-lg truncate">Elena Rodriguez</h3>
+<p class="text-primary text-sm font-medium">@elenastyle_nyc</p>
+</div>
+<div class="bg-primary/20 rounded-lg px-2 py-1 text-center">
+<p class="text-[10px] text-primary font-bold uppercase tracking-wider leading-none">Score</p>
+<p class="text-primary font-bold text-lg leading-none">94</p>
+</div>
+</div>
+<div class="mt-3 flex gap-4">
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">Engagement</p>
+<p class="text-slate-900 dark:text-slate-100 font-semibold">6.2%</p>
+</div>
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">Followers</p>
+<p class="text-slate-900 dark:text-slate-100 font-semibold">42.8k</p>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-4 flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-primary/10 rounded text-[10px] font-bold text-primary uppercase">Sustainable</span>
+<span class="px-2 py-1 bg-primary/10 rounded text-[10px] font-bold text-primary uppercase">Streetwear</span>
+<span class="px-2 py-1 bg-primary/10 rounded text-[10px] font-bold text-primary uppercase">Editorials</span>
+</div>
+<button class="mt-4 w-full py-3 bg-primary rounded-xl text-white font-bold text-sm shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform">
+                View Social Card
+            </button>
+</div>
+<!-- Creator Card 2 -->
+<div class="bg-primary/5 dark:bg-white/5 rounded-2xl p-4 border border-primary/10 shadow-sm">
+<div class="flex gap-4">
+<div class="relative">
+<img class="size-20 rounded-xl object-cover border-2 border-primary/20" data-alt="Portrait of a young male fashion creator" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTst5dEmZ9e0T4d4udwE_LlQktfGLsfas4WLbjcbz-v1EivS8q66pxsMUA_QWZc-VjlviAPzqJWfnV8aAqyayK9hAd673I7ixI7xbS4gHSQIvC1Fybx0potiKXb4KEDAm6eaDJsiFf-I0oUzfzXUBHNunHThiQotA2YDME-w8odDfkiYx7gFhfuZKGMIkvZunoNLPihNb_FqKlWQiMn8Kh3Fq05F8TH-wFwGEB9YsaV1fFzw-McdmcHVGPQeBTWvn2LlDAlVGaxw"/>
+<div class="absolute -bottom-1 -right-1 bg-primary text-white rounded-full p-0.5 border-2 border-background-dark">
+<span class="material-symbols-outlined text-[14px] block">verified</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-slate-900 dark:text-slate-100 font-bold text-lg truncate">Marcus Chen</h3>
+<p class="text-primary text-sm font-medium">@marcus_techwear</p>
+</div>
+<div class="bg-primary/20 rounded-lg px-2 py-1 text-center">
+<p class="text-[10px] text-primary font-bold uppercase tracking-wider leading-none">Score</p>
+<p class="text-primary font-bold text-lg leading-none">88</p>
+</div>
+</div>
+<div class="mt-3 flex gap-4">
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">Engagement</p>
+<p class="text-slate-900 dark:text-slate-100 font-semibold">4.9%</p>
+</div>
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">Followers</p>
+<p class="text-slate-900 dark:text-slate-100 font-semibold">18.5k</p>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-4 flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-primary/10 rounded text-[10px] font-bold text-primary uppercase">Techwear</span>
+<span class="px-2 py-1 bg-primary/10 rounded text-[10px] font-bold text-primary uppercase">Minimalism</span>
+<span class="px-2 py-1 bg-primary/10 rounded text-[10px] font-bold text-primary uppercase">Gear</span>
+</div>
+<button class="mt-4 w-full py-3 bg-primary rounded-xl text-white font-bold text-sm shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform">
+                View Social Card
+            </button>
+</div>
+<!-- Creator Card 3 -->
+<div class="bg-primary/5 dark:bg-white/5 rounded-2xl p-4 border border-primary/10 shadow-sm">
+<div class="flex gap-4">
+<div class="relative">
+<img class="size-20 rounded-xl object-cover border-2 border-primary/20" data-alt="Portrait of a smiling female fitness and fashion influencer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfR0czGpCZic6Y3allqtKIYDeMrF0DLpzHxaMEfQa5tyUBGzhdr-zDKjaOjWyoZ5UQ0V_RWZSQmD0sNL-B8AngqyTgAiXGD2sAlJXB46oaumeZVkJ7iJtVoSgwq8ARJNcqvLrwLs9w7ShnbR8xpshiCwl0r1PjpYVubPWZOjR_ERGKzfp38-9EwaKtf_s_FDjJiAqEf0dx8jEYSHW2NQV0GrX_zf7IOED1linOE7IuncHoQBZimbTd-BZ9yOaV-5Igw0HnDma1rg"/>
+<div class="absolute -bottom-1 -right-1 bg-primary text-white rounded-full p-0.5 border-2 border-background-dark">
+<span class="material-symbols-outlined text-[14px] block">verified</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-slate-900 dark:text-slate-100 font-bold text-lg truncate">Sarah Jenkins</h3>
+<p class="text-primary text-sm font-medium">@sarahfit_official</p>
+</div>
+<div class="bg-primary/20 rounded-lg px-2 py-1 text-center">
+<p class="text-[10px] text-primary font-bold uppercase tracking-wider leading-none">Score</p>
+<p class="text-primary font-bold text-lg leading-none">91</p>
+</div>
+</div>
+<div class="mt-3 flex gap-4">
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">Engagement</p>
+<p class="text-slate-900 dark:text-slate-100 font-semibold">5.7%</p>
+</div>
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">Followers</p>
+<p class="text-slate-900 dark:text-slate-100 font-semibold">31.2k</p>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-4 flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-primary/10 rounded text-[10px] font-bold text-primary uppercase">Activewear</span>
+<span class="px-2 py-1 bg-primary/10 rounded text-[10px] font-bold text-primary uppercase">Lifestyle</span>
+<span class="px-2 py-1 bg-primary/10 rounded text-[10px] font-bold text-primary uppercase">Wellness</span>
+</div>
+<button class="mt-4 w-full py-3 bg-primary rounded-xl text-white font-bold text-sm shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform">
+                View Social Card
+            </button>
+</div>
+</main>
+<!-- Bottom Navigation -->
+<nav class="sticky bottom-0 bg-background-light dark:bg-background-dark border-t border-primary/10 px-4 pb-6 pt-2">
+<div class="flex items-center justify-around">
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">explore</span>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-primary transition-colors">Explore</p>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<div class="relative flex flex-col items-center">
+<span class="material-symbols-outlined text-primary fill-[1]">work</span>
+<div class="absolute -top-1 -right-1 size-2 bg-primary rounded-full animate-pulse"></div>
+</div>
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest">Campaigns</p>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">chat_bubble</span>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-primary transition-colors">Messages</p>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">person</span>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-primary transition-colors">Profile</p>
+</a>
+</div>
+</nav>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-\[1\] {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</body></html>

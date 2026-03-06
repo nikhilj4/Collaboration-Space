@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Discovery Advanced Filters</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d125f4",
+                        "background-light": "#f8f5f8",
+                        "background-dark": "#1f1022",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden max-w-md mx-auto border-x border-slate-200 dark:border-primary/10">
+<div class="flex items-center justify-between px-4 py-4 border-b border-slate-200 dark:border-primary/10">
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-primary/10">
+<span class="material-symbols-outlined text-2xl">close</span>
+</button>
+<h1 class="text-xl font-bold tracking-tight">Advanced Filters</h1>
+<button class="text-primary font-semibold text-sm">Reset</button>
+</div>
+<div class="flex-1 overflow-y-auto pb-32">
+<!-- Platforms Section -->
+<div class="px-4 pt-6">
+<h3 class="text-lg font-bold mb-4">Platforms</h3>
+<div class="flex flex-wrap gap-3">
+<button class="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white">
+<span class="material-symbols-outlined text-lg">photo_camera</span>
+<span class="text-sm font-medium">Instagram</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-200 dark:bg-primary/10 text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined text-lg">play_circle</span>
+<span class="text-sm font-medium">YouTube</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-200 dark:bg-primary/10 text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined text-lg">music_note</span>
+<span class="text-sm font-medium">TikTok</span>
+</button>
+</div>
+</div>
+<!-- Audience Demographics -->
+<div class="px-4 pt-8">
+<h3 class="text-lg font-bold mb-4">Audience Demographics</h3>
+<div class="space-y-6">
+<!-- Age Range -->
+<div>
+<div class="flex justify-between items-center mb-3">
+<span class="text-sm font-medium text-slate-500 dark:text-slate-400">Age Range</span>
+<span class="text-sm font-bold text-primary">18 - 34</span>
+</div>
+<div class="relative w-full h-1.5 bg-slate-200 dark:bg-primary/10 rounded-full">
+<div class="absolute left-[20%] right-[40%] h-full bg-primary rounded-full"></div>
+<div class="absolute left-[20%] top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-primary rounded-full shadow-sm"></div>
+<div class="absolute right-[40%] top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-primary rounded-full shadow-sm"></div>
+</div>
+</div>
+<!-- Gender -->
+<div>
+<span class="text-sm font-medium text-slate-500 dark:text-slate-400 block mb-3">Gender Split</span>
+<div class="flex h-10 w-full rounded-xl overflow-hidden bg-slate-200 dark:bg-primary/10">
+<div class="flex items-center justify-center bg-primary text-white text-xs font-bold" style="width: 65%;">65% Female</div>
+<div class="flex items-center justify-center bg-primary/40 text-white text-xs font-bold" style="width: 35%;">35% Male</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Location -->
+<div class="px-4 pt-8">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-lg font-bold">Location</h3>
+<span class="text-xs text-primary font-medium">Map Search</span>
+</div>
+<div class="relative mb-3">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">location_on</span>
+<input class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-100 dark:bg-primary/5 border border-slate-200 dark:border-primary/20 focus:outline-none focus:ring-1 focus:ring-primary text-sm" placeholder="Search City or Country" type="text"/>
+</div>
+<div class="flex flex-wrap gap-2">
+<div class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs">
+                        New York, US <span class="material-symbols-outlined text-[14px]">close</span>
+</div>
+<div class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs">
+                        London, UK <span class="material-symbols-outlined text-[14px]">close</span>
+</div>
+</div>
+</div>
+<!-- Social Score -->
+<div class="px-4 pt-8">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-lg font-bold">Minimum Social Score</h3>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-lg">star</span>
+<span class="font-bold">7.5+</span>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-2">
+<button class="py-3 rounded-xl border border-slate-200 dark:border-primary/20 bg-transparent text-sm font-medium">5.0</button>
+<button class="py-3 rounded-xl border border-slate-200 dark:border-primary/20 bg-transparent text-sm font-medium">6.0</button>
+<button class="py-3 rounded-xl bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20">7.5</button>
+<button class="py-3 rounded-xl border border-slate-200 dark:border-primary/20 bg-transparent text-sm font-medium">9.0</button>
+</div>
+<p class="text-[10px] text-slate-500 mt-2 px-1 italic">Score based on engagement, authenticity, and growth velocity.</p>
+</div>
+</div>
+<!-- Sticky Bottom Sheet Handle / Footer -->
+<div class="absolute bottom-0 left-0 w-full p-4 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-t border-slate-200 dark:border-primary/10">
+<div class="flex flex-col items-center pb-4">
+<div class="h-1.5 w-12 rounded-full bg-slate-300 dark:bg-primary/20 mb-4"></div>
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-xl shadow-primary/20 transition-all active:scale-[0.98]">
+                    Show 1,240 Results
+                </button>
+</div>
+</div>
+</div>
+</body></html>

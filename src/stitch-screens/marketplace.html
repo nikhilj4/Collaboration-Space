@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Marketplace Campaigns</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d125f4",
+                        "background-light": "#f8f5f8",
+                        "background-dark": "#1f1022",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Spline Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Header -->
+<header class="sticky top-0 z-20 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10 px-4 pt-6 pb-2">
+<div class="flex items-center justify-between mb-4">
+<div class="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined">search</span>
+</div>
+<h1 class="text-lg font-bold tracking-tight">Campaigns</h1>
+<div class="flex size-10 items-center justify-end">
+<button class="relative text-slate-900 dark:text-slate-100">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-primary"></span>
+</button>
+</div>
+</div>
+<!-- Segmented Control -->
+<div class="flex p-1 bg-primary/5 dark:bg-white/5 rounded-xl mb-4">
+<button class="flex-1 py-2 text-sm font-semibold rounded-lg bg-white dark:bg-primary shadow-sm text-primary dark:text-white">
+                Sponsorships
+            </button>
+<button class="flex-1 py-2 text-sm font-medium text-slate-500 dark:text-slate-400">
+                Gigs
+            </button>
+</div>
+<!-- Horizontal Categories -->
+<div class="flex gap-2 overflow-x-auto hide-scrollbar pb-2">
+<div class="px-4 py-1.5 rounded-full bg-primary text-white text-xs font-semibold whitespace-nowrap">All Categories</div>
+<div class="px-4 py-1.5 rounded-full bg-primary/10 dark:bg-white/5 text-slate-700 dark:text-slate-300 text-xs font-medium whitespace-nowrap">Lifestyle</div>
+<div class="px-4 py-1.5 rounded-full bg-primary/10 dark:bg-white/5 text-slate-700 dark:text-slate-300 text-xs font-medium whitespace-nowrap">Fitness</div>
+<div class="px-4 py-1.5 rounded-full bg-primary/10 dark:bg-white/5 text-slate-700 dark:text-slate-300 text-xs font-medium whitespace-nowrap">Fashion</div>
+<div class="px-4 py-1.5 rounded-full bg-primary/10 dark:bg-white/5 text-slate-700 dark:text-slate-300 text-xs font-medium whitespace-nowrap">Tech</div>
+</div>
+</header>
+<!-- Content Area -->
+<main class="flex-1 overflow-y-auto px-4 pb-24">
+<!-- Paid Section -->
+<section class="mt-6">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-xl font-bold">Paid Campaigns</h2>
+<span class="text-xs font-medium text-primary">View all</span>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<!-- Card 1 -->
+<div class="bg-white dark:bg-white/5 rounded-xl p-4 border border-primary/5 shadow-sm">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<div class="size-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center overflow-hidden">
+<img alt="Brand Logo" class="size-full object-cover" data-alt="Minimalist modern tech brand logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyH1kCvzeFWYssxBlWT8WTQQcIDY_i7eW6Iug-XrQRRvuqBET_jy8zlNZKRtXU7qbqJdF_mTEF1CKrpJ5isF4Dh9QtmYy6K-RrSzm0Zl3MSGZdAznUQPx5Zck7uayxqRFSu9E15bf91vg0tVgQe0IhZW9GboNWGBexlm7SrXDsVjFsnN28MStTTK7Kj8wvO4GAkm0SlT4S6ZW4-f8AOefhU-CcmrAAssJuEOO7rGEQO4tuldBs7Lgua2k6WXmNg-D5MnQt38v7KQ"/>
+</div>
+<div>
+<h3 class="font-bold text-sm">Lumina Tech</h3>
+<p class="text-[10px] text-slate-500 uppercase tracking-wider">Electronics</p>
+</div>
+</div>
+<div class="bg-primary/10 text-primary px-2 py-1 rounded text-[10px] font-bold">PAID</div>
+</div>
+<p class="text-sm line-clamp-2 mb-4 text-slate-600 dark:text-slate-400">Promote the new Lumina X1 headphones in a 60-second video review.</p>
+<div class="flex items-center justify-between pt-3 border-t border-primary/5">
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-slate-400 !text-sm">videocam</span>
+<span class="material-symbols-outlined text-slate-400 !text-sm">camera_alt</span>
+</div>
+<div class="text-sm font-bold text-primary">$1,200 - $2,500</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white dark:bg-white/5 rounded-xl p-4 border border-primary/5 shadow-sm">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<div class="size-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center overflow-hidden">
+<img alt="Brand Logo" class="size-full object-cover" data-alt="Organic skincare brand emblem" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAZOHrtTQy8tzxT8UqFegPjeeD1KuHd8z9Y4IKgSr3Wf7dnYVX3RTQvHmWbJMtjWKEnTy-GtKzBES2fUyjRH-18LnAf7rEVlL-VdwZk57nzrB9yH1955zh75GgVURELrHc59_DFlJHqXswb53FHY8FLDAWx8RNvQpi7ikrR3zWcnEy4oaYff7_T5-xl9SIUWF5oi0iQk41jNbdhsGFDGOvXoZaQ8wcBkfkLAfQN-zvGlVTGW84jQYbxmwh3kKb2BFfVRIKdxIC3w"/>
+</div>
+<div>
+<h3 class="font-bold text-sm">Glow Organic</h3>
+<p class="text-[10px] text-slate-500 uppercase tracking-wider">Beauty</p>
+</div>
+</div>
+<div class="bg-primary/10 text-primary px-2 py-1 rounded text-[10px] font-bold">PAID</div>
+</div>
+<p class="text-sm line-clamp-2 mb-4 text-slate-600 dark:text-slate-400">Share your morning skincare routine featuring our Vitamin C serum.</p>
+<div class="flex items-center justify-between pt-3 border-t border-primary/5">
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-slate-400 !text-sm">movie</span>
+</div>
+<div class="text-sm font-bold text-primary">$450 - $800</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Barter Section -->
+<section class="mt-8">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-xl font-bold">Barter / Gifted</h2>
+<span class="text-xs font-medium text-primary">View all</span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<!-- Barter Card 1 -->
+<div class="bg-white dark:bg-white/5 rounded-xl p-3 border border-primary/5 shadow-sm">
+<div class="flex justify-center mb-3">
+<div class="size-16 rounded-full bg-slate-100 dark:bg-white/10 p-1">
+<img alt="Brand" class="size-full rounded-full object-cover" data-alt="Modern fitness apparel brand icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2OLfcY0p0i3TQacwucyRA8hw2yElhfagirew4py4UtcJGYcJGs0Dcb2PX3BrIx4_P3u1qBA6-XXg_yCm9RMxb3Oz-sjhAFtaQRGm6LibTJoG7t-_u220ZopSXgb4x3SqxtNG-C8hlbUkltviW1trEGRB51gSPtK6ZtxQP0Ag_DD_H6ctKKCf2A7PxoUJ0IetZ3aPH81rB5EXodKq4fVWAue0-hKqo09VoxQYGgcSVok0InkT57F1Aw-x2zk-puWS06Ix_o6JJ-Q"/>
+</div>
+</div>
+<h3 class="font-bold text-center text-xs mb-1">FitForm Wear</h3>
+<p class="text-[10px] text-center text-slate-500 mb-3">Activewear Set</p>
+<div class="flex justify-center gap-2 mb-3">
+<span class="material-symbols-outlined text-slate-400 !text-xs">camera_alt</span>
+<span class="material-symbols-outlined text-slate-400 !text-xs">movie</span>
+</div>
+<button class="w-full py-1.5 rounded-lg border border-primary/30 text-[10px] font-bold text-primary uppercase tracking-tight">Apply Now</button>
+</div>
+<!-- Barter Card 2 -->
+<div class="bg-white dark:bg-white/5 rounded-xl p-3 border border-primary/5 shadow-sm">
+<div class="flex justify-center mb-3">
+<div class="size-16 rounded-full bg-slate-100 dark:bg-white/10 p-1">
+<img alt="Brand" class="size-full rounded-full object-cover" data-alt="Gourmet coffee brand logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLw5UdUIGj6VwIW7cBAg8U3CVkF0oynvbtFpqPsT9EgxGxGm7Udfb9crnSSwe2Qfkdy3sXWftcauRqd-sBrDVRK8rJ_eYynw42MAO7IQR5WTijXeWSYR9Oq3862CPGeIzpv0pxTW5Gnnxq6i9j0zZMKyo_Gmqn9JwicF7By0VLU3KAOH1R7lLkvBv2vswGCYvbKZSJT-Nqf9IQusbwO_r-8reJVevqnx_1nJVpNKgLSaXNUwXmNKVDRQn9KSgVjhTQ1l5gHCSHcQ"/>
+</div>
+</div>
+<h3 class="font-bold text-center text-xs mb-1">Brew &amp; Co</h3>
+<p class="text-[10px] text-center text-slate-500 mb-3">Premium Kit</p>
+<div class="flex justify-center gap-2 mb-3">
+<span class="material-symbols-outlined text-slate-400 !text-xs">videocam</span>
+</div>
+<button class="w-full py-1.5 rounded-lg border border-primary/30 text-[10px] font-bold text-primary uppercase tracking-tight">Apply Now</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-lg border-t border-primary/10 pb-6 pt-2">
+<div class="flex items-center justify-around px-2">
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-[10px] font-medium leading-none">Discover</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined font-fill-1">campaign</span>
+<span class="text-[10px] font-bold leading-none">Campaigns</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="text-[10px] font-medium leading-none">Messages</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="text-[10px] font-medium leading-none">Profile</span>
+</a>
+</div>
+</nav>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .font-fill-1 {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</body></html>
