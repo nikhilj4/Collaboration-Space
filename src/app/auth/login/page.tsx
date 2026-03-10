@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { useAuthStore } from '@/lib/store';
 
 const P = '#d125f4';
 const BG = '#1f1022';
@@ -25,13 +26,22 @@ export default function LoginPage() {
     const [error, setError] = useState('');
     const router = useRouter();
     const supabase = createClient();
+    const { loadSession } = useAuthStore();
 
     async function handleEmailLogin(e: React.FormEvent) {
-        e.preventDefault(); setError(''); setLoading(true);
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) setError(error.message);
-        else router.push('/');
-        setLoading(false);
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+        if (signInError) {
+            setError(signInError.message);
+            setLoading(false);
+            return;
+        }
+        // Load session into store then navigate
+        await loadSession();
+        router.push('/');
+        router.refresh();
     }
 
     async function handleSendOtp() {
@@ -44,10 +54,18 @@ export default function LoginPage() {
     }
 
     async function handleVerifyOtp(e: React.FormEvent) {
-        e.preventDefault(); setError(''); setLoading(true);
-        const { error } = await supabase.auth.verifyOtp({ phone, token: otp, type: 'sms' });
-        if (error) setError(error.message);
-        else router.push('/');
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+        const { error: otpError } = await supabase.auth.verifyOtp({ phone, token: otp, type: 'sms' });
+        if (otpError) {
+            setError(otpError.message);
+            setLoading(false);
+            return;
+        }
+        await loadSession();
+        router.push('/');
+        router.refresh();
         setLoading(false);
     }
 
@@ -91,7 +109,7 @@ export default function LoginPage() {
                     <form onSubmit={handleEmailLogin} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                         <input style={inp} type="email" placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)} required />
                         <input style={inp} type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
-                        {error && <p style={{ color: '#f87171', fontSize: 13 }}>{error}</p>}
+                        {error && <p style={{ color: '#f87171', fontSize: 13, background: '#f8717120', padding: '10px 14px', borderRadius: 8 }}>{error}</p>}
                         <button type="submit" disabled={loading} style={{ padding: '15px 0', background: P, border: 'none', borderRadius: 12, color: '#fff', fontWeight: 700, fontSize: 16, cursor: 'pointer', fontFamily: 'inherit', opacity: loading ? 0.7 : 1, boxShadow: `0 6px 24px ${P}40` }}>
                             {loading ? 'Signing in…' : 'Sign In'}
                         </button>

@@ -27,7 +27,6 @@ export default function App() {
   const [detailId, setDetailId] = useState<string>('');
   const router = useRouter();
 
-  // go(screen) or go(screen, id) for detail screens
   const go = (x: Scr, id?: string) => {
     if (id) setDetailId(id);
     setS(x);
@@ -36,8 +35,14 @@ export default function App() {
   useEffect(() => { loadSession(); }, [loadSession]);
 
   useEffect(() => {
-    if (!isLoading && !isLoggedIn) router.push('/auth/login');
-    if (!isLoading && isLoggedIn && !user?.onboarding_completed) router.push('/onboarding');
+    if (isLoading) return;
+    if (!isLoggedIn) {
+      router.push('/auth/login');
+      return;
+    }
+    if (isLoggedIn && user && !user.onboarding_completed) {
+      router.push('/onboarding');
+    }
   }, [isLoading, isLoggedIn, user, router]);
 
   if (isLoading) {
@@ -51,8 +56,8 @@ export default function App() {
   }
 
   if (!isLoggedIn) return null;
+  if (user && !user.onboarding_completed) return null;
 
-  // Typed go for detail screens — cast to allow optional id param
   const goTyped = go as (x: Scr, id?: string) => void;
 
   return (

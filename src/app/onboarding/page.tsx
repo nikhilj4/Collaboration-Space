@@ -18,7 +18,7 @@ const inp = {
 const CREATOR_NICHES = ['Fashion', 'Beauty', 'Tech', 'Food', 'Travel', 'Fitness', 'Gaming', 'Music', 'Comedy', 'Lifestyle', 'Finance', 'Education'];
 
 export default function OnboardingPage() {
-    const { user } = useAuthStore();
+    const { user, loadSession } = useAuthStore();
     const role = user?.role ?? 'creator';
     const router = useRouter();
     const supabase = createClient();
@@ -54,17 +54,18 @@ export default function OnboardingPage() {
             const uid = user?.id;
             if (!uid) throw new Error('Not authenticated');
 
-            // Update username
-            if (username) {
-                await supabase.from('users').update({ username, onboarding_completed: true }).eq('id', uid);
-            }
+            // Mark onboarding complete and set username
+            await supabase.from('users').upsert({
+                id: uid,
+                username: username || undefined,
+                onboarding_completed: true,
+            }, { onConflict: 'id' });
 
             if (role === 'creator') {
                 await supabase.from('creator_profiles').upsert({
                     user_id: uid, bio, location, categories,
                 }, { onConflict: 'user_id' });
 
-                // Store social handles (no tokens yet — user will connect via OAuth later)
                 const handles = [
                     { platform: 'instagram', handle: igHandle },
                     { platform: 'youtube', handle: ytHandle },
@@ -87,10 +88,12 @@ export default function OnboardingPage() {
                     website,
                     description: brandDesc,
                 }, { onConflict: 'user_id' });
-                await supabase.from('users').update({ onboarding_completed: true }).eq('id', uid);
             }
 
+            // Reload session so store has onboarding_completed: true
+            await loadSession();
             router.push('/');
+            router.refresh();
         } catch (e: unknown) {
             setError(e instanceof Error ? e.message : 'Something went wrong');
         } finally {

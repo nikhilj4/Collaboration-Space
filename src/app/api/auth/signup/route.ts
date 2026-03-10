@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
             password: data.password,
             options: {
                 data: { full_name: data.full_name, role: data.role },
-                emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+                emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
             },
         });
 
@@ -29,9 +29,16 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: error.message }, { status: 400 });
         }
 
-        // Set role in users table
+        // Upsert role in users table using admin client to bypass RLS
         if (authData.user) {
-            await supabase.from('users').update({ role: data.role }).eq('id', authData.user.id);
+            const adminSupabase = await createAdminClient();
+            await adminSupabase.from('users').upsert({
+                id: authData.user.id,
+                email: data.email,
+                full_name: data.full_name,
+                role: data.role,
+                onboarding_completed: false,
+            }, { onConflict: 'id' });
         }
 
         return NextResponse.json({
