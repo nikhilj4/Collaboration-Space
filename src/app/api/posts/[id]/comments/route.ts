@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth, adminDb } from '@/lib/firebase/admin';
 import { FieldValue } from 'firebase-admin/firestore';
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const sessionCookie = request.cookies.get('nova_session')?.value;
         if (!sessionCookie) return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
         await adminAuth.verifySessionCookie(sessionCookie, true);
 
-        const postId = params.id;
+        const resolvedParams = await params;
+        const postId = resolvedParams.id;
 
         const [postDoc, commentsSnap] = await Promise.all([
             adminDb.collection('posts').doc(postId).get(),
@@ -49,14 +50,15 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const sessionCookie = request.cookies.get('nova_session')?.value;
         if (!sessionCookie) return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
         const decoded = await adminAuth.verifySessionCookie(sessionCookie, true);
         const uid = decoded.uid;
 
-        const postId = params.id;
+        const resolvedParams = await params;
+        const postId = resolvedParams.id;
         const { content } = await request.json();
 
         if (!content?.trim()) return NextResponse.json({ error: 'Comment empty.' }, { status: 400 });

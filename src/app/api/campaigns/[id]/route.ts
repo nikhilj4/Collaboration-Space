@@ -2,14 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth, adminDb } from '@/lib/firebase/admin';
 import { FieldValue } from 'firebase-admin/firestore';
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const sessionCookie = request.cookies.get('nova_session')?.value;
         if (!sessionCookie) return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
         const decoded = await adminAuth.verifySessionCookie(sessionCookie, true);
         const uid = decoded.uid;
         
-        const campaignId = params.id;
+        const resolvedParams = await params;
+        const campaignId = resolvedParams.id;
 
         const doc = await adminDb.collection('campaigns').doc(campaignId).get();
         if (!doc.exists) return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
@@ -44,14 +45,15 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const sessionCookie = request.cookies.get('nova_session')?.value;
         if (!sessionCookie) return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
         const decoded = await adminAuth.verifySessionCookie(sessionCookie, true);
         const uid = decoded.uid;
 
-        const campaignId = params.id;
+        const resolvedParams = await params;
+        const campaignId = resolvedParams.id;
         const { pitch, proposed_rate } = await request.json();
 
         // Write application

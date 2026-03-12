@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth, adminDb } from '@/lib/firebase/admin';
 import { FieldValue } from 'firebase-admin/firestore';
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const sessionCookie = request.cookies.get('nova_session')?.value;
         if (!sessionCookie) return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
         await adminAuth.verifySessionCookie(sessionCookie, true);
 
-        const gigId = params.id;
+        const resolvedParams = await params;
+        const gigId = resolvedParams.id;
 
         // Fetch gig
         const docRef = adminDb.collection('gigs').doc(gigId);
@@ -63,14 +64,15 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const sessionCookie = request.cookies.get('nova_session')?.value;
         if (!sessionCookie) return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
         const decoded = await adminAuth.verifySessionCookie(sessionCookie, true);
         const uid = decoded.uid;
 
-        const gigId = params.id;
+        const resolvedParams = await params;
+        const gigId = resolvedParams.id;
         const { package_name, price, delivery_days, seller_id } = await request.json();
 
         const orderRef = await adminDb.collection('gig_orders').add({
