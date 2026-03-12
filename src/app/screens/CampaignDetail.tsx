@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { Scr } from './types';
 import { Icon, P_COLOR as P, BG, CARD, BORDER } from './ui';
-import { createClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/lib/store';
 
 interface Campaign {
@@ -24,52 +23,44 @@ export default function CampaignDetailScreen({ campaignId, go }: { campaignId: s
     const [error, setError] = useState('');
     const [applied, setApplied] = useState(false);
     const [alreadyApplied, setAlreadyApplied] = useState(false);
-    const supabase = createClient();
-
     useEffect(() => {
-        (async () => {
-            const { data } = await supabase.from('campaigns').select(`
-        id, title, description, campaign_type, budget_min, budget_max, barter_details,
-        platforms, target_niches, deliverables, min_followers, min_social_score, max_creators, deadline,
-        brand_profiles ( company_name, logo_url, industry )
-      `).eq('id', campaignId).single();
-            setCampaign(data as unknown as Campaign);
-
-            // Check if already applied
-            if (creatorProfile?.id) {
-                const { data: existing } = await supabase.from('campaign_applications').select('id')
-                    .eq('campaign_id', campaignId).eq('creator_id', creatorProfile.id).maybeSingle();
-                setAlreadyApplied(!!existing);
-            }
-            setLoading(false);
-        })();
-    }, [campaignId, creatorProfile, supabase]);
+        let mounted = true;
+        fetch(`/api/campaigns/${campaignId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (!mounted) return;
+                setCampaign(data.campaign ?? null);
+                setAlreadyApplied(data.applied ?? false);
+                setLoading(false);
+            })
+            .catch(() => { if (mounted) setLoading(false); });
+        
+        return () => { mounted = false; };
+    }, [campaignId]);
 
     async function applyNow() {
         if (!creatorProfile?.id || !campaign) return;
         setSubmitting(true); setError('');
 
-        const { error: ae } = await supabase.from('campaign_applications').insert({
-            campaign_id: campaign.id,
-            creator_id: creatorProfile.id,
-            pitch: pitch.trim(),
-            proposed_rate: proposedRate ? parseFloat(proposedRate) : null,
-            status: 'pending',
-        });
+        try {
+            const res = await fetch(`/api/campaigns/${campaignId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    pitch: pitch.trim(),
+                    proposed_rate: proposedRate ? parseFloat(proposedRate) : null,
+                })
+            });
 
-        if (ae) { setError(ae.message); setSubmitting(false); return; }
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to apply');
 
-        // Send notification to brand (best effort)
-        await supabase.from('notifications').insert({
-            user_id: user?.id,
-            title: 'Application submitted!',
-            message: `You applied to "${campaign.title}". The brand will review shortly.`,
-            type: 'campaign',
-            reference_id: campaign.id,
-        }).maybeSingle();
-
-        setApplied(true);
-        setSubmitting(false);
+            setApplied(true);
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setSubmitting(false);
+        }
     }
 
     if (applied) {

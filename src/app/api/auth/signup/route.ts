@@ -1,54 +1,56 @@
-import { createClient, createAdminClient } from '@/lib/supabase/server';
-import { NextResponse } from 'next/server';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from 'next/server';
+import { adminAuth, adminDb } from '@/lib/firebase/admin';
 
-const signupSchema = z.object({
-    email: z.string().email(),
-    password: z.string().min(8).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        'Password must contain uppercase, lowercase, and number'),
-    full_name: z.string().min(2).max(100),
-    role: z.enum(['creator', 'brand']),
-});
-
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
     try {
-        const body = await request.json();
-        const data = signupSchema.parse(body);
-        const supabase = await createClient();
+        const { email, password, full_name, role } = await request.json();
 
-        const { data: authData, error } = await supabase.auth.signUp({
-            email: data.email,
-            password: data.password,
-            options: {
-                data: { full_name: data.full_name, role: data.role },
-                emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
-            },
+        if (!email || !password || !full_name || !role) {
+            return NextResponse.json({ error: 'All fields are required.' }, { status: 400 });
+        }
+
+        // Create user in Firebase Auth
+        const userRecord = await adminAuth.createUser({
+            email,
+            password,
+            displayName: full_name,
         });
 
-        if (error) {
-            return NextResponse.json({ error: error.message }, { status: 400 });
-        }
-
-        // Upsert role in users table using admin client to bypass RLS
-        if (authData.user) {
-            const adminSupabase = await createAdminClient();
-            await adminSupabase.from('users').upsert({
-                id: authData.user.id,
-                email: data.email,
-                full_name: data.full_name,
-                role: data.role,
-                onboarding_completed: false,
-            }, { onConflict: 'id' });
-        }
-
-        return NextResponse.json({
-            message: 'Check your email to confirm your account',
-            user_id: authData.user?.id,
+        // Create Firestore user doc
+        await adminDb.collection('users').doc(userRecord.uid).set({
+            email,
+            full_name,
+            role,
+            onboarding_completed: false,
+            created_at: new Date().toISOString(),
         });
-    } catch (err) {
-        if (err instanceof z.ZodError) {
-            return NextResponse.json({ error: err.issues[0].message }, { status: 422 });
+
+        // Create empty role-specific profile
+        if (role === 'creator') {
+            await adminDb.collection('creator_profiles').doc(userRecord.uid).set({
+                social_score: 0,
+                categories: [],
+                created_at: new Date().toISOString(),
+            });
+        } else {
+            await adminDb.collection('brand_profiles').doc(userRecord.uid).set({
+                brand_name: full_name,
+                created_at: new Date().toISOString(),
+            });
         }
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+
+        // Create a custom token for immediate sign-in on the client
+        const customToken = await adminAuth.createCustomToken(userRecord.uid);
+
+        return NextResponse.json({ customToken }, { status: 201 });
+    } catch (err: any) {
+        const msg: Record<string, string> = {
+            'auth/email-already-exists': 'An account with this email already exists.',
+            'auth/invalid-password': 'Password must be at least 6 characters.',
+        };
+        return NextResponse.json(
+            { error: msg[err.code] ?? err.message ?? 'Signup failed.' },
+            { status: 400 }
+        );
     }
 }

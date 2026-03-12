@@ -1,80 +1,115 @@
-import { createClient } from '@/lib/supabase/server';
-import { NextResponse } from 'next/server';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from 'next/server';
+import { adminAuth, adminDb } from '@/lib/firebase/admin';
+import { FieldValue } from 'firebase-admin/firestore';
 
-// GET campaigns with filters
-export async function GET(request: Request) {
-    const { searchParams } = new URL(request.url);
-    const type = searchParams.get('type');
-    const niche = searchParams.get('niche');
-    const minBudget = searchParams.get('min_budget');
-    const maxBudget = searchParams.get('max_budget');
-    const platform = searchParams.get('platform');
-    const page = parseInt(searchParams.get('page') ?? '1');
-    const limit = Math.min(parseInt(searchParams.get('limit') ?? '20'), 50);
-    const offset = (page - 1) * limit;
+export async function GET(request: NextRequest) {
+    try {
+        const sessionCookie = request.cookies.get('nova_session')?.value;
+        if (!sessionCookie) return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
+        await adminAuth.verifySessionCookie(sessionCookie, true);
 
-    const supabase = await createClient();
-    let query = supabase.from('campaigns')
-        .select(`*, brand_profiles!inner(brand_name, logo_url, verification_status)`)
-        .eq('status', 'active')
-        .order('created_at', { ascending: false })
-        .range(offset, offset + limit - 1);
+        const { searchParams } = new URL(request.url);
+        const tab = searchParams.get('tab') || 'sponsorships';
 
-    if (type) query = query.eq('campaign_type', type);
-    if (niche) query = query.contains('target_niches', [niche]);
-    if (platform) query = query.contains('platforms', [platform]);
-    if (minBudget) query = query.gte('budget_min', parseInt(minBudget));
-    if (maxBudget) query = query.lte('budget_max', parseInt(maxBudget));
+        if (tab === 'sponsorships') {
+            const snap = await adminDb.collection('campaigns')
+                .where('status', '==', 'active')
+                .limit(40)
+                .get();
+                
+            const campaigns = await Promise.all(snap.docs.map(async d => {
+                const data = d.data();
+                let brandProfiles = { brand_name: 'Brand', logo_url: '', verification_status: 'unverified' };
+                try {
+                    const bDoc = await adminDb.collection('brand_profiles').doc(data.brand_id).get();
+                    if (bDoc.exists) brandProfiles = bDoc.data() as any;
+                } catch {}
+                return {
+                    id: d.id,
+                    ...data,
+                    brand_profiles: brandProfiles,
+                    created_at: data.created_at?.toDate?.()?.toISOString() ?? new Date().toISOString()
+                };
+            }));
 
-    const { data, error } = await query;
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    return NextResponse.json({ data });
+            campaigns.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+            return NextResponse.json({ campaigns: campaigns.slice(0, 20) });
+
+        } else {
+            const snap = await adminDb.collection('gigs')
+                .where('status', '==', 'active')
+                .limit(40)
+                .get();
+
+            const gigs = await Promise.all(snap.docs.map(async d => {
+                const data = d.data();
+                let params = { name: 'basic', price: 0, delivery_days: 1 };
+                try {
+                    const pkgs = await adminDb.collection('gig_packages').where('gig_id', '==', d.id).get();
+                    if (!pkgs.empty) params = pkgs.docs[0].data() as any;
+                } catch {}
+
+                let creator = { social_score: 0, users: { full_name: 'Creator', avatar_url: '' } };
+                try {
+                    const cpDoc = await adminDb.collection('creator_profiles').doc(data.creator_id).get();
+                    if (cpDoc.exists) {
+                        creator.social_score = cpDoc.data()?.social_score ?? 0;
+                        const uDoc = await adminDb.collection('users').doc(data.creator_id).get();
+                        if (uDoc.exists) creator.users = uDoc.data() as any;
+                    }
+                } catch {}
+
+                return {
+                    id: d.id,
+                    ...data,
+                    gig_packages: [params], // For UI simplicity
+                    creator_profiles: creator
+                };
+            }));
+
+            gigs.sort((a, b) => ((b as any).total_orders || 0) - ((a as any).total_orders || 0));
+            return NextResponse.json({ gigs: gigs.slice(0, 20) });
+        }
+    } catch (err: any) {
+        return NextResponse.json({ error: err.message }, { status: 500 });
+    }
 }
 
-// POST - create campaign (brands only)
-const schema = z.object({
-    title: z.string().min(5).max(150),
-    description: z.string().min(30).max(3000),
-    campaign_type: z.enum(['paid', 'barter', 'hybrid']),
-    budget_min: z.number().optional(),
-    budget_max: z.number().optional(),
-    barter_details: z.string().optional(),
-    platforms: z.array(z.string()).min(1),
-    content_types: z.array(z.string()).min(1),
-    target_niches: z.array(z.string()).min(1),
-    target_locations: z.array(z.string()).optional(),
-    min_followers: z.number().optional(),
-    min_social_score: z.number().optional(),
-    deliverables: z.array(z.string()).min(1),
-    deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-    max_creators: z.number().min(1).max(1000).default(1),
-});
-
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
     try {
-        const supabase = await createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-        const { data: userRow } = await supabase.from('users').select('role').eq('id', user.id).single();
-        if (userRow?.role !== 'brand') return NextResponse.json({ error: 'Brand account required' }, { status: 403 });
+        const sessionCookie = request.cookies.get('nova_session')?.value;
+        if (!sessionCookie) return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
+        const decoded = await adminAuth.verifySessionCookie(sessionCookie, true);
+        const uid = decoded.uid;
 
         const body = await request.json();
-        const campaignData = schema.parse(body);
 
-        const { data: brand } = await supabase.from('brand_profiles').select('id').eq('user_id', user.id).single();
-        if (!brand) return NextResponse.json({ error: 'Brand profile required' }, { status: 400 });
-
-        const { data, error } = await supabase.from('campaigns')
-            .insert({ ...campaignData, brand_id: brand.id, status: 'active' }).select().single();
-
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-        return NextResponse.json({ data }, { status: 201 });
-    } catch (err) {
-        if (err instanceof z.ZodError) {
-            return NextResponse.json({ error: err.issues[0].message }, { status: 422 });
+        const doc = await adminDb.collection('brand_profiles').doc(uid).get();
+        if (!doc.exists) {
+            return NextResponse.json({ error: 'Brand profile not found.' }, { status: 403 });
         }
-        return NextResponse.json({ error: 'Server error' }, { status: 500 });
+
+        const campaignRef = await adminDb.collection('campaigns').add({
+            brand_id: uid,
+            title: body.title,
+            description: body.description,
+            campaign_type: body.campaign_type,
+            status: 'active',
+            budget_min: body.budget_min ?? null,
+            budget_max: body.budget_max ?? null,
+            barter_details: body.barter_details ?? null,
+            platforms: body.platforms ?? [],
+            target_niches: body.target_niches ?? [],
+            deliverables: body.deliverables ?? [],
+            min_followers: body.min_followers ?? null,
+            min_social_score: body.min_social_score ?? null,
+            max_creators: body.max_creators ?? 1,
+            deadline: body.deadline ?? null,
+            created_at: FieldValue.serverTimestamp()
+        });
+
+        return NextResponse.json({ success: true, id: campaignRef.id });
+    } catch (err: any) {
+        return NextResponse.json({ error: err.message }, { status: 500 });
     }
 }

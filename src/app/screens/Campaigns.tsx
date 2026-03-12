@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { Scr } from './types';
 import { Icon, Nav, P_COLOR as P, BG, CARD, BORDER } from './ui';
-import { createClient } from '@/lib/supabase/client';
 
 interface Campaign {
     id: string;
@@ -32,26 +31,17 @@ export default function CampaignsScreen({ go }: { go: (s: Scr, id?: string) => v
     const [campaigns, setCampaigns] = useState<Campaign[]>([]);
     const [gigs, setGigs] = useState<Gig[]>([]);
     const [loading, setLoading] = useState(true);
-    const supabase = createClient();
-
     useEffect(() => {
         setLoading(true);
-        if (tab === 'sponsorships') {
-            supabase.from('campaigns')
-                .select('*, brand_profiles(brand_name, logo_url, verification_status)')
-                .eq('status', 'active')
-                .order('created_at', { ascending: false })
-                .limit(20)
-                .then(({ data }: { data: any[] | null }) => { setCampaigns((data as Campaign[]) ?? []); setLoading(false); });
-        } else {
-            supabase.from('gigs')
-                .select('*, gig_packages(name, price, delivery_days), creator_profiles(social_score, users(full_name, avatar_url))')
-                .eq('status', 'active')
-                .order('total_orders', { ascending: false })
-                .limit(20)
-                .then(({ data }: { data: any[] | null }) => { setGigs((data as Gig[]) ?? []); setLoading(false); });
-        }
-    }, [tab, supabase]);
+        fetch(`/api/campaigns?tab=${tab}`)
+            .then(res => res.json())
+            .then(data => {
+                if (tab === 'sponsorships') setCampaigns(data.campaigns ?? []);
+                else setGigs(data.gigs ?? []);
+                setLoading(false);
+            })
+            .catch(() => setLoading(false));
+    }, [tab]);
 
     const typeTag: Record<string, { label: string; color: string }> = {
         paid: { label: 'PAID', color: '#22c55e' },

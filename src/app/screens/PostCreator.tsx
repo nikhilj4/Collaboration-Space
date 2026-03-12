@@ -2,8 +2,8 @@
 import { useState, useRef } from 'react';
 import { Scr } from './types';
 import { Icon, P_COLOR as P, BG, BORDER } from './ui';
-import { createClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/lib/store';
+import { uploadCampaignMedia } from '@/lib/upload';
 
 const inp = {
     width: '100%', background: `${P}0a`, border: `1px solid ${BORDER}`,
@@ -17,55 +17,87 @@ export default function PostCreator({ go }: { go: (s: Scr, id?: string) => void 
     const [hashtags, setHashtags] = useState('');
     const [mediaFiles, setMediaFiles] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
+    const [uploadProgress, setUploadProgress] = useState<number[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const fileRef = useRef<HTMLInputElement>(null);
-    const supabase = createClient();
 
     function pickFiles(e: React.ChangeEvent<HTMLInputElement>) {
         const files = Array.from(e.target.files ?? []).slice(0, 4);
         setMediaFiles(files);
         setPreviews(files.map(f => URL.createObjectURL(f)));
+        setUploadProgress(new Array(files.length).fill(0));
     }
 
     function removeFile(i: number) {
         setMediaFiles(prev => prev.filter((_, j) => j !== i));
         setPreviews(prev => prev.filter((_, j) => j !== i));
+        setUploadProgress(prev => prev.filter((_, j) => j !== i));
     }
 
     async function submit() {
-        if (!caption.trim() && mediaFiles.length === 0) { setError('Add a caption or media.'); return; }
-        if (!user) return;
-        setLoading(true); setError('');
-
-        // Upload media to Supabase Storage
-        const mediaUrls: string[] = [];
-        for (const file of mediaFiles) {
-            const ext = file.name.split('.').pop();
-            const path = `posts/${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-            const { data, error: uploadErr } = await supabase.storage.from('media').upload(path, file, { cacheControl: '3600' });
-            if (uploadErr) { setError(`Upload failed: ${uploadErr.message}`); setLoading(false); return; }
-            const { data: url } = supabase.storage.from('media').getPublicUrl(data.path);
-            mediaUrls.push(url.publicUrl);
+        if (!caption.trim() && mediaFiles.length === 0) {
+            setError('Add a caption or media.');
+            return;
+        }
+        if (!user?.id) {
+            setError('Not authenticated. Please log in again.');
+            return;
         }
 
-        // Determine media type
-        const mediaType = mediaFiles[0]?.type.startsWith('video') ? 'video' : 'image';
+        setLoading(true);
+        setError('');
 
-        // Insert post
-        const tags = hashtags.trim().split(/[\s,#]+/).filter(t => t).map(t => t.replace(/^#/, ''));
-        const { error: postErr } = await supabase.from('posts').insert({
-            user_id: user.id,
-            caption: caption.trim(),
-            hashtags: tags,
-            media_urls: mediaUrls,
-            media_type: mediaType,
-        });
+        try {
+            // 1. Upload files to Firebase Storage
+            const mediaUrls: string[] = [];
+            const postId = `${user.id}-${Date.now()}`;
 
-        if (postErr) { setError(postErr.message); setLoading(false); return; }
-        setSuccess(true);
-        setTimeout(() => go('feed'), 1200);
+            for (let i = 0; i < mediaFiles.length; i++) {
+                const file = mediaFiles[i];
+                const url = await uploadCampaignMedia(postId, file, (progress) => {
+                    setUploadProgress(prev => {
+                        const next = [...prev];
+                        next[i] = progress;
+                        return next;
+                    });
+                });
+                mediaUrls.push(url);
+            }
+
+            // 2. Determine media type
+            const mediaType = mediaFiles[0]?.type.startsWith('video') ? 'video' : 'image';
+
+            // 3. Parse hashtags
+            const tags = hashtags.trim()
+                .split(/[\s,#]+/)
+                .filter(t => t)
+                .map(t => t.replace(/^#/, ''));
+
+            // 4. Save post via API route (Admin SDK — no client auth needed)
+            const res = await fetch('/api/posts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    caption: caption.trim(),
+                    hashtags: tags,
+                    media_urls: mediaUrls,
+                    media_type: mediaType,
+                }),
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error ?? 'Failed to publish post.');
+
+            setSuccess(true);
+            setTimeout(() => go('feed'), 1200);
+        } catch (e: unknown) {
+            console.error('Post error:', e);
+            setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     }
 
     if (success) {
@@ -78,6 +110,10 @@ export default function PostCreator({ go }: { go: (s: Scr, id?: string) => void 
         );
     }
 
+    const totalProgress = uploadProgress.length > 0
+        ? Math.round(uploadProgress.reduce((a, b) => a + b, 0) / uploadProgress.length)
+        : 0;
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh', background: BG, fontFamily: "'Spline Sans', sans-serif" }}>
             <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: `1px solid ${BORDER}40` }}>
@@ -86,9 +122,16 @@ export default function PostCreator({ go }: { go: (s: Scr, id?: string) => void 
                 </button>
                 <span style={{ fontWeight: 700, fontSize: 18 }}>New Post</span>
                 <button onClick={submit} disabled={loading} style={{ padding: '8px 20px', background: P, border: 'none', borderRadius: 20, color: '#fff', fontWeight: 700, fontSize: 14, cursor: 'pointer', fontFamily: 'inherit', opacity: loading ? 0.6 : 1 }}>
-                    {loading ? '…' : 'Post'}
+                    {loading ? (uploadProgress.length > 0 ? `${totalProgress}%` : '…') : 'Post'}
                 </button>
             </header>
+
+            {/* Upload progress bar */}
+            {loading && uploadProgress.length > 0 && (
+                <div style={{ height: 3, background: `${P}20` }}>
+                    <div style={{ height: '100%', width: `${totalProgress}%`, background: P, transition: 'width 0.2s' }} />
+                </div>
+            )}
 
             <main style={{ flex: 1, padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 18, overflowY: 'auto' }}>
                 {/* Media picker */}
@@ -110,13 +153,19 @@ export default function PostCreator({ go }: { go: (s: Scr, id?: string) => void 
                                             {isVideo
                                                 ? <video src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                 : <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
-                                            <button onClick={() => removeFile(i)} style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff' }}>
+                                            {/* Per-file upload progress overlay */}
+                                            {loading && uploadProgress[i] < 100 && (
+                                                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    <span style={{ color: '#fff', fontWeight: 700, fontSize: 16 }}>{uploadProgress[i]}%</span>
+                                                </div>
+                                            )}
+                                            <button onClick={() => removeFile(i)} disabled={loading} style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff' }}>
                                                 <Icon n="close" style={{ fontSize: 16 }} />
                                             </button>
                                         </div>
                                     );
                                 })}
-                                {previews.length < 4 && (
+                                {previews.length < 4 && !loading && (
                                     <button onClick={() => fileRef.current?.click()} style={{ aspectRatio: '1', background: `${P}08`, border: `1px dashed ${P}40`, borderRadius: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: P, gap: 4 }}>
                                         <Icon n="add" style={{ fontSize: 28 }} />
                                         <span style={{ fontSize: 11, fontWeight: 600 }}>Add more</span>

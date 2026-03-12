@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Scr } from './types';
 import { Icon, P_COLOR as P, BG, BORDER, CARD } from './ui';
-import { createClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/lib/store';
 
 interface Comment {
@@ -20,29 +19,22 @@ export default function PostCommentsScreen({ postId, go }: { postId: string; go:
     const [sending, setSending] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const bottomRef = useRef<HTMLDivElement>(null);
-    const supabase = createClient();
-
     useEffect(() => {
-        (async () => {
-            const [{ data: p }, { data: c }] = await Promise.all([
-                supabase.from('posts').select('id, caption, likes_count, media_urls, user_id, users ( full_name, username, avatar_url )').eq('id', postId).single(),
-                supabase.from('post_comments').select('id, user_id, content, likes_count, created_at, users ( full_name, username, avatar_url )').eq('post_id', postId).order('created_at', { ascending: true }).limit(100),
-            ]);
-            setPost(p as unknown as Post);
-            setComments((c as unknown as Comment[]) ?? []);
-            setLoading(false);
-        })();
-
-        // Real-time new comments
-        const ch = supabase.channel(`comments-${postId}`)
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'post_comments', filter: `post_id=eq.${postId}` },
-                async (payload: any) => {
-                    const { data: u } = await supabase.from('users').select('full_name, username, avatar_url').eq('id', payload.new.user_id).single();
-                    setComments(prev => [...prev, { ...payload.new, users: u } as Comment]);
-                })
-            .subscribe();
-        return () => { supabase.removeChannel(ch); };
-    }, [postId, supabase]);
+        let mounted = true;
+        fetch(`/api/posts/${postId}/comments`)
+            .then(res => res.json())
+            .then(data => {
+                if (!mounted) return;
+                setPost(data.post ?? null);
+                setComments(data.comments ?? []);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error(err);
+                if (mounted) setLoading(false);
+            });
+        return () => { mounted = false; };
+    }, [postId]);
 
     useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [comments]);
 
@@ -51,9 +43,24 @@ export default function PostCommentsScreen({ postId, go }: { postId: string; go:
         setSending(true);
         const content = draft.trim();
         setDraft('');
-        await supabase.from('post_comments').insert({ post_id: postId, user_id: user.id, content });
-        // Increment comments_count on post
-        await supabase.rpc('increment_post_comments' as any, { post_id: postId } as any).maybeSingle();
+
+        // Optimistic update
+        const tempId = 'temp-' + Date.now();
+        setComments(prev => [...prev, {
+            id: tempId,
+            user_id: user.id,
+            content,
+            likes_count: 0,
+            created_at: new Date().toISOString(),
+            users: { full_name: user.full_name ?? 'You', username: user.username ?? '', avatar_url: user.avatar_url ?? null }
+        }]);
+
+        await fetch(`/api/posts/${postId}/comments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content })
+        });
+
         setSending(false);
         inputRef.current?.focus();
     }

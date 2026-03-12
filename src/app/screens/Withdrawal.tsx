@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { Scr } from './types';
 import { Icon, P_COLOR as P, BG, BORDER, CARD } from './ui';
-import { createClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/lib/store';
 
 const inp = {
@@ -27,35 +26,23 @@ export default function WithdrawalScreen({ go }: { go: (s: Scr, id?: string) => 
     async function submit() {
         if (!user) return;
         setLoading(true); setError('');
-        const supabase = createClient();
 
-        // Get wallet
-        const { data: wallet } = await supabase.from('wallets').select('id, balance').eq('user_id', user.id).single();
-        if (!wallet) { setError('Wallet not found.'); setLoading(false); return; }
+        try {
+            const res = await fetch('/api/withdraw', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount, accountName, accountNumber, ifsc, bank })
+            });
 
-        const withdrawAmount = parseFloat(amount);
-        if (withdrawAmount > wallet.balance) { setError('Insufficient balance.'); setLoading(false); return; }
-        if (withdrawAmount < 100) { setError('Minimum withdrawal is ₹100.'); setLoading(false); return; }
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to process withdrawal.');
 
-        // Upsert bank account
-        await supabase.from('bank_accounts').upsert({
-            user_id: user.id, account_name: accountName,
-            account_number: accountNumber, ifsc_code: ifsc, bank_name: bank,
-        }, { onConflict: 'user_id,account_number' });
-
-        // Create debit transaction
-        await supabase.from('transactions').insert({
-            wallet_id: wallet.id, type: 'debit',
-            amount: withdrawAmount,
-            description: `Withdrawal to ${bank} ****${accountNumber.slice(-4)}`,
-            reference_type: 'withdrawal', status: 'pending',
-        });
-
-        // Decrement wallet balance
-        await supabase.from('wallets').update({ balance: wallet.balance - withdrawAmount, total_withdrawn: (wallet as any).total_withdrawn + withdrawAmount }).eq('id', wallet.id);
-
-        setStep('success');
-        setLoading(false);
+            setStep('success');
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     }
 
     if (step === 'success') {

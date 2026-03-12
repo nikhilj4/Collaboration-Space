@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { Scr } from './types';
 import { Icon, Nav, P_COLOR as P, BG, CARD, BORDER } from './ui';
-import { createClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/lib/store';
 
 interface Transaction {
@@ -25,20 +24,20 @@ export default function WalletScreen({ go }: { go: (s: Scr, id?: string) => void
     const [wallet, setWallet] = useState<Wallet | null>(null);
     const [txns, setTxns] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(true);
-    const supabase = createClient();
-
     useEffect(() => {
         if (!user) return;
-        (async () => {
-            const { data: w } = await supabase.from('wallets').select('*').eq('user_id', user.id).single();
-            setWallet(w as Wallet);
-            if (w) {
-                const { data: t } = await supabase.from('transactions').select('*').eq('wallet_id', w.id).order('created_at', { ascending: false }).limit(30);
-                setTxns((t as Transaction[]) ?? []);
-            }
-            setLoading(false);
-        })();
-    }, [user, supabase]);
+        let mounted = true;
+        fetch('/api/wallet')
+            .then(res => res.json())
+            .then(data => {
+                if (!mounted) return;
+                setWallet(data.wallet ?? null);
+                setTxns(data.txns ?? []);
+                setLoading(false);
+            })
+            .catch(() => { if (mounted) setLoading(false); });
+        return () => { mounted = false; };
+    }, [user]);
 
     function fmt(n: number) { return `₹${n?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? '0.00'}`; }
     function timeAgo(ts: string) {

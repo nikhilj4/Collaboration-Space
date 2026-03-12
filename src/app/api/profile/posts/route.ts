@@ -1,24 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase/admin';
-import { AuthError, requireSession } from '@/lib/api/auth';
-import { rateLimit } from '@/lib/api/rateLimit';
-import { jsonError, jsonOk } from '@/lib/api/http';
+import { adminAuth, adminDb } from '@/lib/firebase/admin';
 
 export async function GET(request: NextRequest) {
     try {
-        const rl = await rateLimit(request, { keyPrefix: 'profile_posts', max: 60, window: '60 s' });
-        if (!rl.ok) {
-            return NextResponse.json(
-                { error: 'Too many requests. Please slow down.' },
-                { status: 429, headers: { 'Retry-After': String(rl.retryAfterSeconds) } }
-            );
-        }
-
-        await requireSession(request);
+        const sessionCookie = request.cookies.get('nova_session')?.value;
+        if (!sessionCookie) return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
+        await adminAuth.verifySessionCookie(sessionCookie, true);
 
         const { searchParams } = new URL(request.url);
         const uid = searchParams.get('uid');
-        if (!uid) return jsonError('uid required.', 400);
+        if (!uid) return NextResponse.json({ error: 'uid required.' }, { status: 400 });
 
         // Fetch posts without orderBy to avoid needing a composite index initially
         const snap = await adminDb
@@ -40,10 +31,9 @@ export async function GET(request: NextRequest) {
             })
             .slice(0, 12);
 
-        return jsonOk({ posts });
+        return NextResponse.json({ posts });
     } catch (err: any) {
-        if (err instanceof AuthError) return jsonError(err.message, err.status, { code: err.code });
         console.error('Profile posts error:', err);
-        return jsonError(err?.message ?? 'Failed to load posts.', 500);
+        return NextResponse.json({ error: err.message }, { status: 500 });
     }
 }

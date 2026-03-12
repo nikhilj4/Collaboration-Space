@@ -1,6 +1,9 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signInWithCustomToken } from 'firebase/auth';
+import { auth } from '@/lib/firebase/client';
+import { useAuthStore } from '@/lib/store';
 
 const P = '#d125f4';
 const BG = '#1f1022';
@@ -22,16 +25,38 @@ export default function SignupPage() {
     const [error, setError] = useState('');
     const router = useRouter();
 
+    const { loadSession } = useAuthStore();
+
     async function handleSignup(e: React.FormEvent) {
-        e.preventDefault(); setError(''); setLoading(true);
-        const res = await fetch('/api/auth/signup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password, full_name: fullName, role }),
-        });
-        const data = await res.json();
-        if (!res.ok) { setError(data.error); setLoading(false); return; }
-        router.push('/auth/verify?email=' + encodeURIComponent(email));
+        e.preventDefault();
+        setError(''); setLoading(true);
+        try {
+            const res = await fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password, full_name: fullName, role }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setError(data.error ?? 'Signup failed. Please try again.');
+                return;
+            }
+            // Sign in with the custom token returned from the server
+            const credential = await signInWithCustomToken(auth, data.customToken);
+            const idToken = await credential.user.getIdToken();
+            // Persist server-side session cookie
+            await fetch('/api/auth/session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idToken }),
+            });
+            await loadSession();
+            router.push('/onboarding');
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -49,7 +74,6 @@ export default function SignupPage() {
                 </div>
 
                 {step === 1 ? (
-                    /* Step 1 — Role Selection */
                     <div>
                         <p style={{ color: '#ccc', fontSize: 15, marginBottom: 20, textAlign: 'center' }}>I am joining as a…</p>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 28 }}>
@@ -72,7 +96,6 @@ export default function SignupPage() {
                         </button>
                     </div>
                 ) : (
-                    /* Step 2 — Account Details */
                     <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                         <div>
                             <label style={{ fontSize: 12, color: '#888', fontWeight: 600, display: 'block', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 }}>Full Name</label>

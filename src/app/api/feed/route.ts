@@ -1,20 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase/admin';
-import { AuthError, requireSession } from '@/lib/api/auth';
-import { rateLimit } from '@/lib/api/rateLimit';
-import { jsonError, jsonOk } from '@/lib/api/http';
+import { adminAuth, adminDb } from '@/lib/firebase/admin';
 
 export async function GET(request: NextRequest) {
     try {
-        const rl = await rateLimit(request, { keyPrefix: 'feed_get', max: 60, window: '60 s' });
-        if (!rl.ok) {
-            return NextResponse.json(
-                { error: 'Too many requests. Please slow down.' },
-                { status: 429, headers: { 'Retry-After': String(rl.retryAfterSeconds) } }
-            );
+        const sessionCookie = request.cookies.get('nova_session')?.value;
+        if (!sessionCookie) {
+            return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
         }
 
-        const decoded = await requireSession(request);
+        const decoded = await adminAuth.verifySessionCookie(sessionCookie, true);
         const uid = decoded.uid;
 
         const { searchParams } = new URL(request.url);
@@ -94,30 +88,22 @@ export async function GET(request: NextRequest) {
             })
             .slice(0, 20);
 
-        return jsonOk({ posts: sorted });
+        return NextResponse.json({ posts: sorted });
     } catch (err: any) {
-        if (err instanceof AuthError) return jsonError(err.message, err.status, { code: err.code });
         console.error('Feed error:', err);
-        return jsonError(err?.message ?? 'Failed to load feed.', 500);
+        return NextResponse.json({ error: err.message }, { status: 500 });
     }
 }
 
 // Toggle like
 export async function POST(request: NextRequest) {
     try {
-        const rl = await rateLimit(request, { keyPrefix: 'feed_post', max: 120, window: '60 s' });
-        if (!rl.ok) {
-            return NextResponse.json(
-                { error: 'Too many requests. Please slow down.' },
-                { status: 429, headers: { 'Retry-After': String(rl.retryAfterSeconds) } }
-            );
-        }
-
-        const decoded = await requireSession(request);
+        const sessionCookie = request.cookies.get('nova_session')?.value;
+        if (!sessionCookie) return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
+        const decoded = await adminAuth.verifySessionCookie(sessionCookie, true);
         const uid = decoded.uid;
 
         const { post_id, action } = await request.json(); // action: 'like' | 'unlike' | 'save' | 'unsave'
-        if (!post_id || !action) return jsonError('post_id and action are required.', 400);
 
         const likeRef = adminDb.collection('post_likes').doc(`${post_id}_${uid}`);
         const saveRef = adminDb.collection('post_saves').doc(`${post_id}_${uid}`);
@@ -134,13 +120,10 @@ export async function POST(request: NextRequest) {
             await saveRef.set({ post_id, user_id: uid });
         } else if (action === 'unsave') {
             await saveRef.delete();
-        } else {
-            return jsonError('Invalid action.', 400);
         }
 
-        return jsonOk({ success: true });
+        return NextResponse.json({ success: true });
     } catch (err: any) {
-        if (err instanceof AuthError) return jsonError(err.message, err.status, { code: err.code });
-        return jsonError(err?.message ?? 'Request failed.', 500);
+        return NextResponse.json({ error: err.message }, { status: 500 });
     }
 }

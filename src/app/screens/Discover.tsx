@@ -2,7 +2,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Scr } from './types';
 import { Icon, Nav, P_COLOR as P, BG, CARD, BORDER } from './ui';
-import { createClient } from '@/lib/supabase/client';
 
 interface Creator {
     id: string;
@@ -19,33 +18,33 @@ export default function DiscoverScreen({ go }: { go: (s: Scr) => void }) {
     const [loading, setLoading] = useState(true);
     const [q, setQ] = useState('');
     const [activeNiche, setActiveNiche] = useState('All');
-    const supabase = createClient();
     const debounce = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
     const fetchCreators = useCallback(async (search: string, niche: string) => {
         setLoading(true);
-        const sb = supabase;
-        let query = sb.from('creator_profiles')
-            .select('id, social_score, categories, users!inner(full_name, username, avatar_url), social_accounts(platform, followers_count, engagement_rate)')
-            .order('social_score', { ascending: false })
-            .limit(30);
+        try {
+            const res = await fetch(`/api/discover?niche=${encodeURIComponent(niche)}`);
+            if (!res.ok) throw new Error('Failed to load creators');
+            const data = await res.json();
+            
+            let results = (data.creators as Creator[]) ?? [];
 
-        if (niche !== 'All') query = query.contains('categories', [niche]);
-
-        const { data } = await query;
-        let results = (data as unknown as Creator[]) ?? [];
-
-        // Client-side name search
-        if (search.trim()) {
-            const s = search.toLowerCase();
-            results = results.filter(c =>
-                c.users?.full_name?.toLowerCase().includes(s) ||
-                c.users?.username?.toLowerCase().includes(s)
-            );
+            // Client-side name search
+            if (search.trim()) {
+                const s = search.toLowerCase();
+                results = results.filter(c =>
+                    c.users?.full_name?.toLowerCase().includes(s) ||
+                    c.users?.username?.toLowerCase().includes(s)
+                );
+            }
+            setCreators(results);
+        } catch (e) {
+            console.error('Discover error:', e);
+            setCreators([]);
+        } finally {
+            setLoading(false);
         }
-        setCreators(results);
-        setLoading(false);
-    }, [supabase]);
+    }, []);
 
     useEffect(() => {
         clearTimeout(debounce.current);

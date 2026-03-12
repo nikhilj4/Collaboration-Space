@@ -2,23 +2,22 @@
 import { useEffect, useState } from 'react';
 import { Scr } from './types';
 import { Icon, Nav, P_COLOR as P, BG, CARD, BORDER } from './ui';
-import { createClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/lib/store';
 
-interface Post { id: string; media_urls: string[]; likes_count: number; caption: string }
+interface Post { id: string; media_urls: string[]; likes: number; caption: string }
 
 export default function ProfileScreen({ go }: { go: (s: Scr, id?: string) => void }) {
     const { user, creatorProfile, signOut } = useAuthStore();
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
-    const supabase = createClient();
 
     useEffect(() => {
-        if (!user) return;
-        supabase.from('posts').select('id, media_urls, likes_count, caption')
-            .eq('user_id', user.id).order('created_at', { ascending: false }).limit(12)
-            .then(({ data }: { data: any[] | null }) => { setPosts((data as Post[]) ?? []); setLoading(false); });
-    }, [user, supabase]);
+        if (!user?.id) return;
+        fetch(`/api/profile/posts?uid=${user.id}`)
+            .then(r => r.json())
+            .then(d => { setPosts(d.posts ?? []); setLoading(false); })
+            .catch(() => setLoading(false));
+    }, [user?.id]);
 
     async function handleSignOut() { await signOut(); window.location.href = '/auth/login'; }
 
@@ -40,7 +39,6 @@ export default function ProfileScreen({ go }: { go: (s: Scr, id?: string) => voi
             </header>
 
             <main style={{ flex: 1, overflowY: 'auto', paddingBottom: 88 }}>
-                {/* Profile card */}
                 <div style={{ padding: '24px 20px 20px' }}>
                     <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
                         <div style={{ width: 80, height: 80, borderRadius: '50%', border: `2.5px solid ${P}60`, overflow: 'hidden', background: `${P}20`, flexShrink: 0 }}>
@@ -51,7 +49,6 @@ export default function ProfileScreen({ go }: { go: (s: Scr, id?: string) => voi
                             {creatorProfile?.bio && <p style={{ color: '#888', fontSize: 13, marginTop: 4, lineHeight: 1.4 }}>{creatorProfile.bio}</p>}
                         </div>
                     </div>
-                    {/* Stats */}
                     <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
                         {[
                             { label: 'Posts', value: posts.length },
@@ -68,7 +65,6 @@ export default function ProfileScreen({ go }: { go: (s: Scr, id?: string) => voi
                     </button>
                 </div>
 
-                {/* Posts grid */}
                 <div style={{ borderTop: `1px solid ${BORDER}30`, paddingTop: 14 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', marginBottom: 12 }}>
                         <span style={{ fontWeight: 700, fontSize: 15 }}>Posts</span>
@@ -84,6 +80,9 @@ export default function ProfileScreen({ go }: { go: (s: Scr, id?: string) => voi
                         <div style={{ padding: 32, textAlign: 'center', color: '#555' }}>
                             <Icon n="photo_library" style={{ fontSize: 48, color: '#333', display: 'block', margin: '0 auto 12px' }} />
                             <p style={{ fontSize: 14 }}>No posts yet</p>
+                            <button onClick={() => go('post-creator')} style={{ marginTop: 12, padding: '8px 20px', background: P, border: 'none', borderRadius: 10, color: '#fff', fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>
+                                Create Post
+                            </button>
                         </div>
                     ) : (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>

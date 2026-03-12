@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Scr } from './types';
 import { Icon, P_COLOR as P, BG, BORDER } from './ui';
-import { createClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/lib/store';
 
 interface Conversation {
@@ -24,56 +23,60 @@ export default function MessagingScreen({ go }: { go: (s: Scr, id?: string) => v
     const [sending, setSending] = useState(false);
     const [loadingConvs, setLoadingConvs] = useState(true);
     const bottomRef = useRef<HTMLDivElement>(null);
-    const supabase = createClient();
 
     // Load conversations list
     useEffect(() => {
         if (!user) return;
-        supabase.from('conversations')
-            .select('id, participant_1, participant_2, last_message, last_message_at')
-            .or(`participant_1.eq.${user.id},participant_2.eq.${user.id}`)
-            .order('last_message_at', { ascending: false })
-            .then(async ({ data }: { data: any[] | null }) => {
-                if (!data) { setLoadingConvs(false); return; }
-                // Fetch other user profiles
-                const enriched = await Promise.all(data.map(async c => {
-                    const otherId = c.participant_1 === user.id ? c.participant_2 : c.participant_1;
-                    const { data: u }: { data: any | null } = await supabase.from('users').select('full_name, avatar_url, username').eq('id', otherId).single();
-                    return { ...c, other_user: u ?? undefined };
-                }));
-                setConversations(enriched as Conversation[]);
+        fetch('/api/conversations')
+            .then(res => res.json())
+            .then(data => {
+                if (data.conversations) setConversations(data.conversations);
                 setLoadingConvs(false);
-            });
-    }, [user, supabase]);
+            })
+            .catch(() => setLoadingConvs(false));
+    }, [user]);
 
-    // Load + subscribe to messages when a conversation is opened
+    // Load + poll messages when a conversation is opened
     useEffect(() => {
         if (!activeConv) return;
-        supabase.from('messages').select('*').eq('conversation_id', activeConv.id).order('created_at', { ascending: true })
-            .then(({ data }: { data: any[] | null }) => setMessages((data as Message[]) ?? []));
-
-        const channel = supabase.channel(`conv-${activeConv.id}`)
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${activeConv.id}` },
-                (payload: any) => setMessages(prev => [...prev, payload.new as Message]))
-            .subscribe();
-
-        return () => { supabase.removeChannel(channel); };
-    }, [activeConv, supabase]);
+        let mounted = true;
+        
+        async function loadMsgs() {
+            try {
+                const res = await fetch(`/api/conversations/${activeConv!.id}`);
+                const data = await res.json();
+                if (mounted && data.messages) setMessages(data.messages);
+            } catch (err) {}
+        }
+        
+        loadMsgs();
+        
+        // Simple polling for new messages (every 4s)
+        const iv = setInterval(loadMsgs, 4000);
+        return () => { mounted = false; clearInterval(iv); };
+    }, [activeConv]);
 
     // Auto-scroll on new messages
-    useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
+    useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages.length]);
 
     async function sendMessage() {
         if (!draft.trim() || !activeConv || !user) return;
         setSending(true);
         const content = draft.trim();
         setDraft('');
-        await supabase.from('messages').insert({
-            conversation_id: activeConv.id, sender_id: user.id,
-            content, message_type: 'text',
+
+        const tempId = 'temp-' + Date.now();
+        setMessages(prev => [...prev, {
+            id: tempId, conversation_id: activeConv.id, sender_id: user.id,
+            content, message_type: 'text', created_at: new Date().toISOString()
+        }]);
+
+        await fetch(`/api/conversations/${activeConv.id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content })
         });
-        // Update last_message on conversation
-        await supabase.from('conversations').update({ last_message: content, last_message_at: new Date().toISOString() }).eq('id', activeConv.id);
+        
         setSending(false);
     }
 

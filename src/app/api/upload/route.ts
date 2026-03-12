@@ -1,33 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { adminStorage } from '@/lib/firebase/admin';
-import { AuthError, requireSession } from '@/lib/api/auth';
-import { rateLimit } from '@/lib/api/rateLimit';
-import { jsonError, jsonOk } from '@/lib/api/http';
+import { adminAuth, adminStorage } from '@/lib/firebase/admin';
 
 export async function POST(request: NextRequest) {
     try {
-        const rl = await rateLimit(request, { keyPrefix: 'upload', max: 20, window: '60 s' });
-        if (!rl.ok) {
-            return NextResponse.json(
-                { error: 'Too many uploads. Please try again shortly.' },
-                { status: 429, headers: { 'Retry-After': String(rl.retryAfterSeconds) } }
-            );
+        const sessionCookie = request.cookies.get('nova_session')?.value;
+        if (!sessionCookie) {
+            return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
         }
 
-        await requireSession(request);
+        await adminAuth.verifySessionCookie(sessionCookie, true);
 
         const formData = await request.formData();
         const file = formData.get('file') as File | null;
         const path = formData.get('path') as string | null;
 
         if (!file || !path) {
-            return jsonError('file and path are required.', 400);
-        }
-
-        // Basic server-side validation to avoid abuse
-        const maxBytes = 25 * 1024 * 1024; // 25MB
-        if (typeof (file as any).size === 'number' && (file as any).size > maxBytes) {
-            return jsonError('File too large (max 25MB).', 413);
+            return NextResponse.json({ error: 'file and path are required.' }, { status: 400 });
         }
 
         const buffer = Buffer.from(await file.arrayBuffer());
@@ -44,10 +32,9 @@ export async function POST(request: NextRequest) {
         await fileRef.makePublic();
         const publicUrl = `https://storage.googleapis.com/${bucket.name}/${path}`;
 
-        return jsonOk({ url: publicUrl });
+        return NextResponse.json({ url: publicUrl });
     } catch (err: any) {
-        if (err instanceof AuthError) return jsonError(err.message, err.status, { code: err.code });
         console.error('Upload error:', err);
-        return jsonError(err?.message ?? 'Upload failed.', 500);
+        return NextResponse.json({ error: err.message ?? 'Upload failed.' }, { status: 500 });
     }
 }

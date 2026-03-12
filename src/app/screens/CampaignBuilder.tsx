@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { Scr } from './types';
 import { Icon, P_COLOR as P, BG, BORDER, CARD } from './ui';
-import { createClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/lib/store';
 
 const inp = {
@@ -46,31 +45,36 @@ export default function CampaignBuilder({ go }: { go: (s: Scr, id?: string) => v
 
     async function submit() {
         setLoading(true); setError('');
-        const supabase = createClient();
 
-        const { data: bp } = await supabase.from('brand_profiles').select('id').single();
-        if (!bp) { setError('Brand profile not found.'); setLoading(false); return; }
+        try {
+            const res = await fetch('/api/campaigns', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title, description,
+                    campaign_type: campaignType,
+                    budget_min: budgetMin ? parseInt(budgetMin) : null,
+                    budget_max: budgetMax ? parseInt(budgetMax) : null,
+                    barter_details: barterDetails || null,
+                    platforms: platforms.map(p => p.toLowerCase().split(' ')[0]),
+                    target_niches: niches,
+                    deliverables: deliverables.filter(d => d.trim()),
+                    min_followers: minFollowers ? parseInt(minFollowers) : null,
+                    min_social_score: minScore ? parseInt(minScore) : null,
+                    max_creators: parseInt(maxCreators) || 1,
+                    deadline: deadline || null,
+                })
+            });
 
-        const { error: err } = await supabase.from('campaigns').insert({
-            brand_id: bp.id,
-            title, description,
-            campaign_type: campaignType,
-            status: 'active',
-            budget_min: budgetMin ? parseInt(budgetMin) : null,
-            budget_max: budgetMax ? parseInt(budgetMax) : null,
-            barter_details: barterDetails || null,
-            platforms: platforms.map(p => p.toLowerCase().split(' ')[0]),
-            target_niches: niches,
-            deliverables: deliverables.filter(d => d.trim()),
-            min_followers: minFollowers ? parseInt(minFollowers) : null,
-            min_social_score: minScore ? parseInt(minScore) : null,
-            max_creators: parseInt(maxCreators) || 1,
-            deadline: deadline || null,
-        });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to create campaign');
 
-        if (err) { setError(err.message); setLoading(false); return; }
-        setSuccess(true);
-        setTimeout(() => go('campaigns'), 1500);
+            setSuccess(true);
+            setTimeout(() => go('campaigns'), 1500);
+        } catch (err: any) {
+            setError(err.message);
+            setLoading(false);
+        }
     }
 
     if (success) {

@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 
 const P = '#d125f4';
 const BG = '#1f1022';
@@ -12,11 +11,11 @@ function VerifyContent() {
     const params = useSearchParams();
     const email = params.get('email') ?? '';
     const [loading, setLoading] = useState(false);
-    const supabase = createClient();
-
     async function resend() {
         setLoading(true);
-        await supabase.auth.resend({ type: 'signup', email });
+        // Firebase Auth resend logic would go here
+        // E.g., fetch('/api/auth/resend-verification', { method: 'POST', body: JSON.stringify({ email }) })
+        await new Promise(r => setTimeout(r, 1000));
         setLoading(false);
     }
 

@@ -1,11 +1,17 @@
 'use client';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { createClient } from './supabase/client';
+import { auth, db } from './firebase/client';
+import {
+    onAuthStateChanged,
+    signOut as firebaseSignOut,
+    type User as FirebaseUser,
+} from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
 export type UserRole = 'creator' | 'brand' | 'admin';
 
-interface User {
+export interface User {
     id: string;
     email?: string;
     full_name: string;
@@ -44,6 +50,7 @@ interface AuthState {
 
     loadSession: () => Promise<void>;
     signOut: () => Promise<void>;
+    initAuthListener: () => () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -62,59 +69,82 @@ export const useAuthStore = create<AuthState>()(
 
             loadSession: async () => {
                 set({ isLoading: true });
-                const supabase = createClient();
-                try {
-                    const { data: { user: authUser } } = await supabase.auth.getUser();
-                    if (!authUser) {
-                        set({ user: null, isLoggedIn: false, isLoading: false });
-                        return;
-                    }
-
-                    // User is authenticated — mark as logged in immediately
-                    // Even if the profile row doesn't exist yet
-                    const { data: profile } = await supabase
-                        .from('users').select('*').eq('id', authUser.id).single();
-
-                    if (profile) {
-                        set({ user: profile as User, isLoggedIn: true });
-
-                        if (profile.role === 'creator') {
-                            const { data: cp } = await supabase
-                                .from('creator_profiles').select('*').eq('user_id', authUser.id).single();
-                            set({ creatorProfile: cp as CreatorProfile });
-                        }
-                        if (profile.role === 'brand') {
-                            const { data: bp } = await supabase
-                                .from('brand_profiles').select('*').eq('user_id', authUser.id).single();
-                            set({ brandProfile: bp as BrandProfile });
-                        }
-                    } else {
-                        // Auth user exists but no profile row yet — still treat as logged in
-                        // This happens right after email confirmation before onboarding
-                        set({
-                            user: {
-                                id: authUser.id,
-                                email: authUser.email,
-                                full_name: authUser.user_metadata?.full_name ?? '',
-                                role: (authUser.user_metadata?.role as UserRole) ?? 'creator',
-                                onboarding_completed: false,
-                            },
-                            isLoggedIn: true,
-                        });
-                    }
-                } catch {
-                    set({ user: null, isLoggedIn: false });
-                } finally {
-                    set({ isLoading: false });
+                const firebaseUser = auth?.currentUser;
+                if (!firebaseUser) {
+                    set({ user: null, isLoggedIn: false, isLoading: false });
+                    return;
                 }
+                await fetchAndSetUser(firebaseUser, set);
             },
 
             signOut: async () => {
-                const supabase = createClient();
-                await supabase.auth.signOut();
-                set({ user: null, creatorProfile: null, brandProfile: null, isLoggedIn: false });
+                await firebaseSignOut(auth);
+                set({
+                    user: null,
+                    creatorProfile: null,
+                    brandProfile: null,
+                    isLoggedIn: false,
+                });
+                // Clear session cookie
+                await fetch('/api/auth/session', { method: 'DELETE' });
+            },
+
+            initAuthListener: () => {
+                if (!auth) return () => {};
+                const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+                    if (firebaseUser) {
+                        await fetchAndSetUser(firebaseUser, set);
+                    } else {
+                        set({ user: null, isLoggedIn: false, isLoading: false });
+                    }
+                });
+                return unsubscribe;
             },
         }),
         { name: 'nova-auth', partialize: (s) => ({ user: s.user, isLoggedIn: s.isLoggedIn }) }
     )
 );
+
+// Helper: fetch user doc from Firestore and set state
+async function fetchAndSetUser(
+    firebaseUser: FirebaseUser,
+    set: (partial: Partial<AuthState>) => void
+) {
+    try {
+        const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+
+        if (userDoc.exists()) {
+            const profile = { id: firebaseUser.uid, ...userDoc.data() } as User;
+            set({ user: profile, isLoggedIn: true });
+
+            if (profile.role === 'creator') {
+                const cpDoc = await getDoc(doc(db, 'creator_profiles', firebaseUser.uid));
+                if (cpDoc.exists()) {
+                    set({ creatorProfile: { id: firebaseUser.uid, ...cpDoc.data() } as CreatorProfile });
+                }
+            }
+            if (profile.role === 'brand') {
+                const bpDoc = await getDoc(doc(db, 'brand_profiles', firebaseUser.uid));
+                if (bpDoc.exists()) {
+                    set({ brandProfile: { id: firebaseUser.uid, ...bpDoc.data() } as BrandProfile });
+                }
+            }
+        } else {
+            // Auth exists but no Firestore doc yet (between signup & onboarding)
+            set({
+                user: {
+                    id: firebaseUser.uid,
+                    email: firebaseUser.email ?? undefined,
+                    full_name: firebaseUser.displayName ?? '',
+                    role: 'creator',
+                    onboarding_completed: false,
+                },
+                isLoggedIn: true,
+            });
+        }
+    } catch {
+        set({ user: null, isLoggedIn: false });
+    } finally {
+        set({ isLoading: false });
+    }
+}

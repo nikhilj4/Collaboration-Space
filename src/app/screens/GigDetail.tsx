@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { Scr } from './types';
 import { Icon, Nav, P_COLOR as P, BG, CARD, BORDER } from './ui';
-import { createClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/lib/store';
 import RazorpayCheckout from './RazorpayCheckout';
 
@@ -23,43 +22,44 @@ export default function GigDetailScreen({ gigId, go }: { gigId: string; go: (s: 
     const [orderId, setOrderId] = useState<string | null>(null);
     const [paid, setPaid] = useState(false);
     const [error, setError] = useState('');
-    const supabase = createClient();
-
     useEffect(() => {
-        supabase.from('gigs').select(`
-      id, title, description, category, tags, packages, media_urls, views_count, orders_count, rating_avg, rating_count,
-      creator_profiles ( bio, social_score, users ( full_name, username, avatar_url ) )
-    `).eq('id', gigId).single().then(({ data }: { data: any | null }) => {
-            setGig(data as unknown as Gig);
-            setLoading(false);
-        });
-        // Increment view count
-        supabase.from('gigs').update({ views_count: supabase.rpc as any }).eq('id', gigId);
-    }, [gigId, supabase]);
+        let mounted = true;
+        fetch(`/api/gigs/${gigId}`)
+            .then(res => res.json())
+            .then(d => {
+                if (!mounted) return;
+                setGig(d.gig ?? null);
+                setLoading(false);
+            })
+            .catch(() => { if (mounted) setLoading(false); });
+        return () => { mounted = false; };
+    }, [gigId]);
 
     async function placeOrder() {
         if (!user || !gig) return;
         setOrdering(true); setError('');
         const pkg = gig.packages[selectedPkg];
 
-        // Get seller user_id from creator profile
-        const { data: cp } = await supabase.from('creator_profiles').select('user_id').eq('id', (gig.creator_profiles as any).id).single();
-
-        const { data: order, error: oe } = await supabase.from('gig_orders').insert({
-            gig_id: gig.id,
-            buyer_id: user.id,
-            seller_id: (cp as any)?.user_id ?? null,
-            package_name: pkg.name,
-            amount: pkg.price,
-            status: 'pending',
-            payment_status: 'pending',
-            delivery_deadline: new Date(Date.now() + pkg.delivery_days * 86400000).toISOString(),
-            requirements: '',
-        }).select('id').single();
-
-        if (oe) { setError(oe.message); setOrdering(false); return; }
-        setOrderId((order as any).id);
-        setOrdering(false);
+        try {
+            const res = await fetch(`/api/gigs/${gigId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    package_name: pkg.name,
+                    price: pkg.price,
+                    delivery_days: pkg.delivery_days,
+                    seller_id: (gig.creator_profiles as any).id
+                })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to create order');
+            
+            setOrderId(data.orderId);
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setOrdering(false);
+        }
     }
 
     if (paid) {

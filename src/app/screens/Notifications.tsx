@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { Scr } from './types';
 import { Icon, Nav, P_COLOR as P, BG, CARD, BORDER } from './ui';
-import { createClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/lib/store';
 
 interface Notification {
@@ -30,43 +29,42 @@ export default function NotificationsScreen({ go }: { go: (s: Scr) => void }) {
     const [tab, setTab] = useState(0);
     const [loading, setLoading] = useState(true);
     const { user } = useAuthStore();
-    const supabase = createClient();
-
     useEffect(() => {
         if (!user) return;
         setLoading(true);
 
-        let query = supabase.from('notifications')
-            .select('*').eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(50);
-
-        if (tab === 1) query = query.in('type', ['campaign_invite', 'payment']);
-        if (tab === 2) query = query.in('type', ['follow', 'like', 'comment']);
-
-        query.then(({ data }: { data: Notification[] | null }) => {
-            setNotifs(data ?? []);
-            setLoading(false);
-        });
-
-        // Realtime subscription
-        const channel = supabase.channel('notifications')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
-                (payload: any) => setNotifs(prev => [payload.new as Notification, ...prev])
-            ).subscribe();
-
-        return () => { supabase.removeChannel(channel); };
-    }, [user, tab, supabase]);
+        const tabParam = tab === 1 ? 'sponsorship' : tab === 2 ? 'social' : 'all';
+        fetch(`/api/notifications?tab=${tabParam}`)
+            .then(res => res.json())
+            .then(data => {
+                setNotifs(data.notifications ?? []);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error(err);
+                setLoading(false);
+            });
+    }, [user, tab]);
 
     async function markRead(id: string) {
-        await supabase.from('notifications').update({ read_at: new Date().toISOString() }).eq('id', id);
-        setNotifs(prev => prev.map(n => n.id === id ? { ...n, read_at: new Date().toISOString() } : n));
+        const now = new Date().toISOString();
+        setNotifs(prev => prev.map(n => n.id === id ? { ...n, read_at: now } : n));
+        await fetch('/api/notifications', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'read_one', id }),
+        });
     }
 
     async function markAllRead() {
         if (!user) return;
-        await supabase.from('notifications').update({ read_at: new Date().toISOString() }).eq('user_id', user.id).is('read_at', null);
-        setNotifs(prev => prev.map(n => ({ ...n, read_at: n.read_at ?? new Date().toISOString() })));
+        const now = new Date().toISOString();
+        setNotifs(prev => prev.map(n => ({ ...n, read_at: n.read_at ?? now })));
+        await fetch('/api/notifications', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'read_all' }),
+        });
     }
 
     const unread = notifs.filter(n => !n.read_at).length;

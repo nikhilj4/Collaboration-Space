@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { Scr } from './types';
 import { Icon, Nav, P_COLOR as P, BG, CARD, BORDER } from './ui';
-import { createClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/lib/store';
 
 interface ScoreHistory { score: number; calculated_at: string }
@@ -46,21 +45,20 @@ export default function AnalyticsScreen({ go }: { go: (s: Scr, id?: string) => v
     const [history, setHistory] = useState<ScoreHistory[]>([]);
     const [accounts, setAccounts] = useState<SocialAccount[]>([]);
     const [loading, setLoading] = useState(true);
-    const supabase = createClient();
-
     useEffect(() => {
         if (!creatorProfile?.id) { setLoading(false); return; }
-        Promise.all([
-            supabase.from('social_score_history').select('score, calculated_at')
-                .eq('creator_id', creatorProfile.id).order('calculated_at', { ascending: true }).limit(12),
-            supabase.from('social_accounts').select('platform, followers_count, engagement_rate, avg_likes, avg_comments, reach_estimate')
-                .eq('creator_id', creatorProfile.id),
-        ]).then(([hist, acct]: [any, any]) => {
-            setHistory((hist.data ?? []) as ScoreHistory[]);
-            setAccounts((acct.data ?? []) as SocialAccount[]);
-            setLoading(false);
-        });
-    }, [creatorProfile, supabase]);
+        fetch('/api/analytics')
+            .then(res => res.json())
+            .then(data => {
+                setHistory(data.history ?? []);
+                setAccounts(data.accounts ?? []);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error(err);
+                setLoading(false);
+            });
+    }, [creatorProfile?.id]);
 
     const score = creatorProfile?.social_score ?? 0;
     const scoreLevel = score >= 800 ? { label: 'Elite', color: '#22c55e' } : score >= 600 ? { label: 'Rising Star', color: '#f59e0b' } : score >= 400 ? { label: 'Growing', color: P } : { label: 'New', color: '#888' };

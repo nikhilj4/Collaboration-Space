@@ -1,21 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth, adminDb } from '@/lib/firebase/admin';
 import { FieldValue } from 'firebase-admin/firestore';
-import { AuthError, requireSession } from '@/lib/api/auth';
-import { rateLimit } from '@/lib/api/rateLimit';
-import { jsonError, jsonOk } from '@/lib/api/http';
 
 export async function POST(request: NextRequest) {
     try {
-        const rl = await rateLimit(request, { keyPrefix: 'onboarding', max: 15, window: '60 s' });
-        if (!rl.ok) {
-            return NextResponse.json(
-                { error: 'Too many requests. Please try again shortly.' },
-                { status: 429, headers: { 'Retry-After': String(rl.retryAfterSeconds) } }
-            );
+        // Verify session cookie
+        const sessionCookie = request.cookies.get('nova_session')?.value;
+        if (!sessionCookie) {
+            return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
         }
 
-        const decoded = await requireSession(request);
+        const decoded = await adminAuth.verifySessionCookie(sessionCookie, true);
         const uid = decoded.uid;
 
         const body = await request.json();
@@ -55,10 +50,9 @@ export async function POST(request: NextRequest) {
             }, { merge: true });
         }
 
-        return jsonOk({ success: true });
+        return NextResponse.json({ success: true });
     } catch (err: any) {
-        if (err instanceof AuthError) return jsonError(err.message, err.status, { code: err.code });
         console.error('Onboarding API error:', err);
-        return jsonError(err?.message ?? 'Failed to save profile.', 500);
+        return NextResponse.json({ error: err.message ?? 'Failed to save profile.' }, { status: 500 });
     }
 }

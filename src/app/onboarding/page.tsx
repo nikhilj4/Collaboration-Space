@@ -1,7 +1,6 @@
 'use client';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/lib/store';
 
 const P = '#d125f4';
@@ -18,10 +17,9 @@ const inp = {
 const CREATOR_NICHES = ['Fashion', 'Beauty', 'Tech', 'Food', 'Travel', 'Fitness', 'Gaming', 'Music', 'Comedy', 'Lifestyle', 'Finance', 'Education'];
 
 export default function OnboardingPage() {
-    const { user, loadSession } = useAuthStore();
+    const { user, loadSession, isLoading } = useAuthStore();
     const role = user?.role ?? 'creator';
     const router = useRouter();
-    const supabase = createClient();
 
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -44,64 +42,66 @@ export default function OnboardingPage() {
 
     const totalSteps = role === 'creator' ? 3 : 2;
 
+    // If already completed onboarding, skip to dashboard
+    useEffect(() => {
+        if (!isLoading && user?.onboarding_completed) {
+            router.replace('/');
+        }
+    }, [isLoading, user, router]);
+
     const toggleCategory = useCallback((c: string) => {
         setCategories(prev => prev.includes(c) ? prev.filter(x => x !== c) : prev.length < 5 ? [...prev, c] : prev);
     }, []);
 
     async function finish() {
-        setLoading(true); setError('');
+        setLoading(true);
+        setError('');
         try {
-            const uid = user?.id;
-            if (!uid) throw new Error('Not authenticated');
+            if (!user?.id) throw new Error('Not authenticated. Please log in again.');
 
-            // Mark onboarding complete and set username
-            await supabase.from('users').upsert({
-                id: uid,
-                username: username || undefined,
-                onboarding_completed: true,
-            }, { onConflict: 'id' });
-
-            if (role === 'creator') {
-                await supabase.from('creator_profiles').upsert({
-                    user_id: uid, bio, location, categories,
-                }, { onConflict: 'user_id' });
-
-                const handles = [
-                    { platform: 'instagram', handle: igHandle },
-                    { platform: 'youtube', handle: ytHandle },
-                    { platform: 'tiktok', handle: ttHandle },
-                ].filter(h => h.handle.trim());
-
-                if (handles.length > 0) {
-                    const { data: cp } = await supabase.from('creator_profiles').select('id').eq('user_id', uid).single();
-                    if (cp) {
-                        for (const h of handles) {
-                            await supabase.from('social_accounts').upsert({ creator_id: cp.id, ...h }, { onConflict: 'creator_id,platform' });
-                        }
-                    }
-                }
-            } else {
-                await supabase.from('brand_profiles').upsert({
-                    user_id: uid,
-                    brand_name: brandName,
+            // Call server API — uses Admin SDK so no Firestore permission issues
+            const res = await fetch('/api/auth/onboarding', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    role,
+                    username,
+                    bio,
+                    location,
+                    categories,
+                    igHandle,
+                    ytHandle,
+                    ttHandle,
+                    brandName,
                     industry,
                     website,
-                    description: brandDesc,
-                }, { onConflict: 'user_id' });
-            }
+                    brandDesc,
+                }),
+            });
 
-            // Reload session so store has onboarding_completed: true
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error ?? 'Failed to save profile.');
+
+            // Reload store so onboarding_completed becomes true, then navigate
             await loadSession();
             router.push('/');
             router.refresh();
         } catch (e: unknown) {
-            setError(e instanceof Error ? e.message : 'Something went wrong');
+            console.error('Onboarding error:', e);
+            setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
         } finally {
             setLoading(false);
         }
     }
 
-    const stepLabel = ['Your Identity', 'Your Niche', 'Social Links'];
+    if (isLoading) {
+        return (
+            <div style={{ minHeight: '100dvh', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 40, height: 40, border: '3px solid #4a2d52', borderTop: `3px solid ${P}`, borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            </div>
+        );
+    }
 
     return (
         <div style={{ minHeight: '100dvh', background: BG, fontFamily: "'Spline Sans', sans-serif", display: 'flex', flexDirection: 'column' }}>
@@ -176,6 +176,17 @@ export default function OnboardingPage() {
                                         <input style={inp} placeholder={s.ph} value={s.value} onChange={e => s.set(e.target.value)} />
                                     </div>
                                 ))}
+
+                                {/* Summary card before launch */}
+                                <div style={{ background: `${P}08`, border: `1px solid ${BORDER}`, borderRadius: 14, padding: 16, marginTop: 8 }}>
+                                    <p style={{ fontSize: 13, fontWeight: 600, color: P, marginBottom: 8 }}>✦ Profile Summary</p>
+                                    <p style={{ fontSize: 13, color: '#aaa', margin: 0 }}>@{username || 'username'} · {location || 'Location not set'}</p>
+                                    {categories.length > 0 && (
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+                                            {categories.map(c => <span key={c} style={{ fontSize: 11, background: `${P}20`, color: P, padding: '3px 8px', borderRadius: 6 }}>{c}</span>)}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         )}
                     </>
@@ -210,6 +221,13 @@ export default function OnboardingPage() {
                                     <textarea style={{ ...inp, minHeight: 120, resize: 'vertical' as const }} placeholder="Tell creators what your brand is about…" value={brandDesc} onChange={e => setBrandDesc(e.target.value)} maxLength={500} />
                                     <span style={{ fontSize: 11, color: '#555' }}>{brandDesc.length}/500</span>
                                 </div>
+
+                                {/* Summary before launch */}
+                                <div style={{ background: `${P}08`, border: `1px solid ${BORDER}`, borderRadius: 14, padding: 16 }}>
+                                    <p style={{ fontSize: 13, fontWeight: 600, color: P, marginBottom: 6 }}>✦ Brand Summary</p>
+                                    <p style={{ fontSize: 13, color: '#aaa', margin: 0 }}>{brandName || 'Brand name'} · {industry || 'Industry'}</p>
+                                    {website && <p style={{ fontSize: 12, color: '#666', marginTop: 4 }}>{website}</p>}
+                                </div>
                                 <div style={{ background: `${P}08`, border: `1px solid ${BORDER}`, borderRadius: 14, padding: 16 }}>
                                     <p style={{ fontSize: 13, color: '#888', margin: 0 }}>📋 You can add your logo, cover image, and more details from your Brand Profile after setup.</p>
                                 </div>
@@ -224,10 +242,10 @@ export default function OnboardingPage() {
             {/* Footer CTA */}
             <div style={{ padding: '12px 20px 32px', display: 'flex', gap: 12 }}>
                 {step > 1 && (
-                    <button onClick={() => setStep(s => s - 1 as 1 | 2)} style={{ flex: 1, padding: '14px 0', background: 'none', border: `1px solid ${BORDER}`, borderRadius: 12, color: '#ccc', fontWeight: 600, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit' }}>Back</button>
+                    <button onClick={() => setStep(s => s - 1)} style={{ flex: 1, padding: '14px 0', background: 'none', border: `1px solid ${BORDER}`, borderRadius: 12, color: '#ccc', fontWeight: 600, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit' }}>Back</button>
                 )}
                 {step < totalSteps ? (
-                    <button onClick={() => setStep(s => s + 1 as 2 | 3)} style={{ flex: 2, padding: '15px 0', background: P, border: 'none', borderRadius: 12, color: '#fff', fontWeight: 700, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit', boxShadow: `0 6px 24px ${P}40` }}>Continue →</button>
+                    <button onClick={() => setStep(s => s + 1)} style={{ flex: 2, padding: '15px 0', background: P, border: 'none', borderRadius: 12, color: '#fff', fontWeight: 700, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit', boxShadow: `0 6px 24px ${P}40` }}>Continue →</button>
                 ) : (
                     <button onClick={finish} disabled={loading} style={{ flex: 2, padding: '15px 0', background: P, border: 'none', borderRadius: 12, color: '#fff', fontWeight: 700, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit', opacity: loading ? 0.7 : 1, boxShadow: `0 6px 24px ${P}40` }}>
                         {loading ? 'Setting up…' : '🚀 Launch My Profile'}
